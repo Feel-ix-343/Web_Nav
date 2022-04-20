@@ -1,21 +1,31 @@
 window.onload = () => {
   chrome.storage.sync.get(['filter'], (r) => {
     getFilterElem().value = r.filter
-    console.log(getFilterElem().value)
     loadSearch()
   })
 }
 document.getElementById("inputBox")!.addEventListener("keyup", () => {
-  chrome.storage.sync.set({"filter": getFilterElem().value})
+  chrome.storage.sync.set({ "filter": getFilterElem().value })
   loadSearch()
 })
 
 function loadSearch(): void {
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
+  const defaultDisplay = document.getElementById("default") as HTMLDivElement
+
+  searchOutput.innerHTML = ""
+
+  if (filter === "") {
+    defaultDisplay.hidden = false
+    return
+  }
+
+  defaultDisplay.hidden = true
   chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
-    searchOutput.innerHTML = ""
+    console.log("searching")
     r.forEach(h => {
+      console.log(h)
       searchOutput.appendChild(outputItem(h.title!, h.url!))
     })
   })
