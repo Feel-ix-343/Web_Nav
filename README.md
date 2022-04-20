@@ -3,7 +3,7 @@ The command pallet for the web
 ## Usage
 As of now, there is only functionality for the extension <br>
 To install and use:
-1. Clone repo
+1. Clone repo into a desired directory using `git clone https://github.com/Feel-ix-343/Web_Nav.git`
 2. Open chrome://extensions and turn on developer mode
 3. "Load Unpack" the ./extension/dist/ directory and open the extension
 
