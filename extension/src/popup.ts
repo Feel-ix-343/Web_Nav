@@ -23,9 +23,7 @@ function loadSearch(): void {
 
   defaultDisplay.hidden = true
   chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
-    console.log("searching")
     r.forEach(h => {
-      console.log(h)
       searchOutput.appendChild(outputItem(h.title!, h.url!))
     })
   })
