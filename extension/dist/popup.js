@@ -1,1 +1,37 @@
-(()=>{"use strict";function e(){const e=t().value,n=document.getElementById("searchOutput"),o=document.getElementById("default");n.innerHTML="",""!==e?(o.hidden=!0,chrome.history.search({text:e,maxResults:1e5,startTime:987532627e3}).then((e=>{console.log("searching"),e.forEach((e=>{console.log(e),n.appendChild(function(e,t){const n=document.createElement("a");return n.target="_blank",n.className="outLink",n.innerText=e,n.href=t,n}(e.title,e.url))}))}))):o.hidden=!1}function t(){return document.getElementById("inputBox")}window.onload=()=>{chrome.storage.sync.get(["filter"],(n=>{t().value=n.filter,e()}))},document.getElementById("inputBox").addEventListener("keyup",(()=>{chrome.storage.sync.set({filter:t().value}),e()}))})();
+window.onload = function () {
+    chrome.storage.sync.get(['filter'], function (r) {
+        getFilterElem().value = r.filter;
+        loadSearch();
+    });
+};
+document.getElementById("inputBox").addEventListener("keyup", function () {
+    chrome.storage.sync.set({ "filter": getFilterElem().value });
+    loadSearch();
+});
+function loadSearch() {
+    var filter = getFilterElem().value;
+    var searchOutput = document.getElementById("searchOutput");
+    var defaultDisplay = document.getElementById("default");
+    searchOutput.innerHTML = "";
+    if (filter === "") {
+        defaultDisplay.hidden = false;
+        return;
+    }
+    defaultDisplay.hidden = true;
+    chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(function (r) {
+        r.forEach(function (h) {
+            searchOutput.appendChild(outputItem(h.title, h.url));
+        });
+    });
+}
+function getFilterElem() {
+    return document.getElementById("inputBox");
+}
+function outputItem(title, url) {
+    var outLink = document.createElement("a");
+    outLink.target = "_blank";
+    outLink.className = "outLink";
+    outLink.innerText = title;
+    outLink.href = url;
+    return outLink;
+}
