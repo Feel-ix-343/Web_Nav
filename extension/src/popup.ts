@@ -1,4 +1,5 @@
 window.onload = () => {
+	// TODO Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
     getFilterElem().value = r.filter
     loadSearch()
@@ -10,6 +11,7 @@ document.getElementById("inputBox")!.addEventListener("keyup", () => {
 })
 
 function loadSearch(): void {
+	// TODO Only load the difference so that there is not a blinking as typing
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
   const defaultDisplay = document.getElementById("default") as HTMLDivElement
