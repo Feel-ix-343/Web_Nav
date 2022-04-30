@@ -25,4 +25,8 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
       Ok(Json.toJson("Bad"))
     }
   }
+
+  def getNextId = Action {
+    Json.fromJsonUserData.nextId.toString()) // TODO turn this into json
+  }
 }

@@ -6,4 +6,5 @@
 # An example controller showing a sample home page
 GET     /                           v1.HomeController.index
 POST    /addUserData                   v1.HomeController.addUserData
+GET     /nextId                     v1.HomeController.getNextId
 
