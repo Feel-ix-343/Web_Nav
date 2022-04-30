@@ -1,8 +1,10 @@
 window.onload = function () {
+    // TODO Fix this for when the extension is first launched
     chrome.storage.sync.get(['filter'], function (r) {
         getFilterElem().value = r.filter;
         loadSearch();
     });
+    document.getElementById("inputBox").focus();
 };
 document.getElementById("inputBox").addEventListener("keyup", function () {
     chrome.storage.sync.set({ "filter": getFilterElem().value });

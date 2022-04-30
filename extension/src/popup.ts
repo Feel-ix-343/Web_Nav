@@ -4,6 +4,8 @@ window.onload = () => {
     getFilterElem().value = r.filter
     loadSearch()
   })
+
+  document.getElementById("inputBox").focus()
 }
 document.getElementById("inputBox")!.addEventListener("keyup", () => {
   chrome.storage.sync.set({ "filter": getFilterElem().value })
@@ -11,7 +13,6 @@ document.getElementById("inputBox")!.addEventListener("keyup", () => {
 })
 
 function loadSearch(): void {
-	// TODO Only load the difference so that there is not a blinking as typing
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
   const defaultDisplay = document.getElementById("default") as HTMLDivElement
