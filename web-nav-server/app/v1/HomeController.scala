@@ -8,25 +8,35 @@ import v1.models.JsonConverters._
 import v1.models._
 
 class HomeController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
-  def index = Action {
-    Ok(Json.toJson("This is an API, but, aparently, not for you!"))
+  // Need to change this for the new user method
+  // def addUserData = Action { implicit request =>
+  //   request.body.asJson.map { body =>
+  //     Json.fromJson[User](body) match {
+  //       case JsSuccess(ud, _) => {
+  //         UserData.addUser(ud)
+  //         Ok(Json.toJson(UserData.getUsers))
+  //       }
+  //       case e @ JsError(_) => Ok(Json.toJson(false))
+  //     }
+  //   }.getOrElse {
+  //     Ok(Json.toJson("Bad"))
+  //   }
+  // }
+
+  def newUser = Action {
+    // Creating the ID and adding to the user database
+    val id: String = UserData.newID
+    UserData.addUser(User(id, Seq[HistoryVisit](), "0"))
+
+    // Returning the ID to the client for future api calls related directly to them
+    Ok(Json.toJson(UserData.newID))
   }
 
-  def addUserData = Action { implicit request =>
-    request.body.asJson.map { body =>
-      Json.fromJson[User](body) match {
-        case JsSuccess(ud, _) => {
-          UserData.addUser(ud)
-          Ok(Json.toJson(UserData.getUsers))
-        }
-        case e @ JsError(_) => Ok(Json.toJson(false))
-      }
+  def getLastSynced(id: String) = Action {
+    UserData.getUserLastSynced(id).map { r =>
+      Ok(Json.toJson(r))
     }.getOrElse {
-      Ok(Json.toJson("Bad"))
+      Ok(Json.toJson("Bad Request"))
     }
-  }
-
-  def getNextId = Action {
-    Json.fromJsonUserData.nextId.toString()) // TODO turn this into json
   }
 }
