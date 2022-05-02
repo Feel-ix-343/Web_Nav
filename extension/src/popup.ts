@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-window.onload = () => {
-=======
 window.addEventListener("DOMContentLoaded", () => {
->>>>>>> master
 	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
     getFilterElem().value = r.filter
@@ -54,31 +50,4 @@ function outputItem(title: string, url: string): HTMLAnchorElement {
 
   return outLink
 }
-<<<<<<< HEAD
-
-
-// TODO: Add keyboard shortcuts: Open; Navigate through search
-chrome.commands.onCommand.addListener((command) => {
-  console.log('Command: ${command}')
-})
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-
-// -------------------
-// Key Commands
-// -------------------
-// TODO:Add navigation key commands
->>>>>>> master
-
 

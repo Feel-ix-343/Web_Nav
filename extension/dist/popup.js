@@ -1,10 +1,11 @@
-window.onload = function () {
+window.addEventListener("DOMContentLoaded", function () {
+    // TODO: Fix this for when the extension is first launched
     chrome.storage.sync.get(['filter'], function (r) {
         getFilterElem().value = r.filter;
         loadSearch();
     });
     document.getElementById("inputBox").focus();
-};
+});
 // ------------------------------
 // Loading the Search in the input box
 // ---------------------------
@@ -39,6 +40,3 @@ function outputItem(title, url) {
     outLink.href = url;
     return outLink;
 }
-chrome.commands.onCommand.addListener(function (command) {
-    console.log('Command: ${command}');
-});
