@@ -5,5 +5,5 @@
 
 # An example controller showing a sample home page
 GET     /newUser                     v1.HomeController.newUser
-GET     /getLastSynced              v1.HomeController.getLastSynced
+GET     /getLastSynced              v1.HomeController.getLastSynced(id)
 

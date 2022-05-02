@@ -1,5 +1,5 @@
 window.onload = () => {
-	// TODO Fix this for when the extension is first launched
+	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
     getFilterElem().value = r.filter
     loadSearch()
@@ -11,6 +11,7 @@ document.getElementById("inputBox")!.addEventListener("keyup", () => {
   chrome.storage.sync.set({ "filter": getFilterElem().value })
   loadSearch()
 })
+
 
 function loadSearch(): void {
   const filter = getFilterElem().value
@@ -45,3 +46,23 @@ function outputItem(title: string, url: string): HTMLAnchorElement {
 
   return outLink
 }
+
+
+// TODO: Add keyboard shortcuts: Open; Navigate through search
+chrome.commands.onCommand.addListener((command) => {
+  console.log('Command: ${command}')
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+

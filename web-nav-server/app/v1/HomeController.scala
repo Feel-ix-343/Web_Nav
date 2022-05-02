@@ -39,4 +39,6 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
       Ok(Json.toJson("Bad Request"))
     }
   }
+
+  def syncUser = TODO // TODO:
 }

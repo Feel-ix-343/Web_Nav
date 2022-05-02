@@ -1,5 +1,5 @@
 window.onload = function () {
-    // TODO Fix this for when the extension is first launched
+    // TODO: Fix this for when the extension is first launched
     chrome.storage.sync.get(['filter'], function (r) {
         getFilterElem().value = r.filter;
         loadSearch();
@@ -37,3 +37,7 @@ function outputItem(title, url) {
     outLink.href = url;
     return outLink;
 }
+// TODO: Add keyboard shortcuts: Open; Navigate through search
+chrome.commands.onCommand.addListener(function (command) {
+    console.log('Command: ${command}');
+});
