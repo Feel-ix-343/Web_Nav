@@ -1,5 +1,6 @@
 {
   "name": "Web-Nav Extension",
+
   "description": "Web-Nav Extension",
   "version": "1.0",
   "manifest_version": 3,
@@ -17,5 +18,12 @@
   },
   "action": {
     "default_popup": "popup.html"
+  },
+  "commands":  {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+W"
+      }
+    }
   }
 }
