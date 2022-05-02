@@ -43,3 +43,5 @@
 2022.05.01 19:03:52 INFO  logging to file /home/felix/coding/largerIdeas/web-nav/web-nav-server/.metals/metals.log[0m
 2022.05.01 21:04:20 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/felix/coding/largerIdeas/web-nav/.metals/lsp.trace.json or /home/felix/.cache/metals/lsp.trace.json[0m
 2022.05.01 21:04:21 INFO  logging to file /home/felix/coding/largerIdeas/web-nav/web-nav-server/.metals/metals.log[0m
+2022.05.02 18:57:15 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/felix/coding/largerIdeas/web-nav/.metals/lsp.trace.json or /home/felix/.cache/metals/lsp.trace.json[0m
+2022.05.02 18:57:15 INFO  logging to file /home/felix/coding/largerIdeas/web-nav/web-nav-server/.metals/metals.log[0m
