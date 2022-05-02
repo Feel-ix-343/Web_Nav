@@ -1,12 +1,16 @@
-window.onload = () => {
-	// TODO Fix this for when the extension is first launched
+window.addEventListener("DOMContentLoaded", () => {
+	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
     getFilterElem().value = r.filter
     loadSearch()
   })
 
   document.getElementById("inputBox").focus()
-}
+})
+
+// ------------------------------
+// Loading the Search in the input box
+// ---------------------------
 document.getElementById("inputBox")!.addEventListener("keyup", () => {
   chrome.storage.sync.set({ "filter": getFilterElem().value })
   loadSearch()
@@ -45,3 +49,10 @@ function outputItem(title: string, url: string): HTMLAnchorElement {
 
   return outLink
 }
+
+// -------------------
+// Key Commands
+// -------------------
+// TODO:Add navigation key commands
+
+
