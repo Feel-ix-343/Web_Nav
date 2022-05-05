@@ -18,7 +18,7 @@
         "classpath": [
             "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-sbt/sbt/1.6.2/sbt-1.6.2.jar",
             "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-library.jar",
-            "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.5.0/sbt-bloop-1.5.0.jar",
+            "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.4.12/sbt-bloop-1.4.12.jar",
             "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-sbt/main_2.12/1.6.2/main_2.12-1.6.2.jar",
             "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/org/scala-sbt/io_2.12/1.6.0/io_2.12-1.6.0.jar",
             "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.8.0/jna-5.8.0.jar",
@@ -124,8 +124,8 @@
             ],
             "jars": [
                 "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-library.jar",
-                "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-compiler.jar",
                 "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-reflect.jar",
+                "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-compiler.jar",
                 "/home/felix/.sbt/boot/scala-2.12.15/lib/scala-xml_2.12-1.0.6.jar"
             ],
             "setup": {
@@ -214,17 +214,17 @@
                 {
                     "organization": "ch.epfl.scala",
                     "name": "sbt-bloop",
-                    "version": "1.5.0",
+                    "version": "1.4.12",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "sbt-bloop",
-                            "path": "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.5.0/sbt-bloop-1.5.0.jar"
+                            "path": "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.4.12/sbt-bloop-1.4.12.jar"
                         },
                         {
                             "name": "sbt-bloop",
                             "classifier": "sources",
-                            "path": "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.5.0/sbt-bloop-1.5.0-sources.jar"
+                            "path": "/home/felix/.cache/coursier/v1/https/repo1.maven.org/maven2/ch/epfl/scala/sbt-bloop_2.12_1.0/1.4.12/sbt-bloop-1.4.12-sources.jar"
                         }
                     ]
                 },
