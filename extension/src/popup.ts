@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("inputBox").focus()
 })
 
+
 // ------------------------------
 // Loading the Search in the input box
 // ---------------------------
