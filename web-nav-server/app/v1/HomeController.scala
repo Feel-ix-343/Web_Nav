@@ -27,7 +27,7 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
   def newUser = Action {
     // Creating the ID and adding to the user database
     val id: String = UserData.newID
-    UserData.addUser(User(id, Seq[HistoryVisit](), "0"))
+    UserData.addUser(User(id, IndexedSeq[HistoryVisit](), "0"))
 
     // Returning the ID to the client for future api calls related directly to them
     Ok(Json.toJson(UserData.newID))
@@ -40,7 +40,29 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
     }
   }
 
-  def syncUser(id: String) = TODO
+  def syncUser(id: String) = Action { implicit request =>
+    // Parse the body
+    request.body.asJson.map { body =>
+      // Parse the json into scala code
+      Json.fromJson[Seq[HistoryVisit]](body) match {
+        // Success: r is the scala object
+        case JsSuccess(r, _) => {
+          // TODO: Double check that the starting date is correct; not totally necessary, but could be usefull
+          UserData.getUser(id) match {
+            case Some(user) => {
+              user.history ++ r
+              Ok(Json.toJson(user.history))
+            }
+            case None => Ok(Json.toJson("User does not exist"))
+          }
+        }
+        // Failure
+        case e @ JsError(_) => Ok(Json.toJson("Bad json"))
+      }
+    }.getOrElse {
+      Ok("Need to include a body")
+    }
+  }
     // Check that user exists
     // Check that the last synced date is correct
     //
