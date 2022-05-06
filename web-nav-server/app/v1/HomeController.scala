@@ -7,6 +7,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import v1.models.JsonConverters._
 import v1.models._
 
+
 class HomeController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
   // Need to change this for the new user method
   // def addUserData = Action { implicit request =>
@@ -33,12 +34,14 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
   }
 
   def getLastSynced(id: String) = Action {
-    UserData.getUserLastSynced(id).map { r =>
-      Ok(Json.toJson(r))
-    }.getOrElse {
-      Ok(Json.toJson("Bad Request"))
+    UserData.getUser(id) match {
+      case Some(u) => Ok(Json.toJson(u.lastSynced))
+      case None => Ok(Json.toJson("User does not exist"))
     }
   }
 
-  def syncUser = TODO // TODO:
+  def syncUser(id: String) = TODO
+    // Check that user exists
+    // Check that the last synced date is correct
+    //
 }
