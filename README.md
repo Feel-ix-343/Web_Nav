@@ -16,4 +16,6 @@ To load changed, use `git pull`, and the extension will update automatically in 
 - History: Searches and filters to display (currently, more functionality will come)
 - Storage: Used to pull the previous search back up after closing the extension
 ## TODO
-- Connect the client to the server and set up more complex analysis using the scala backend.
+- Connect the client to the server and set up more complex analysis using the scala backend.To view my progress on this, look at the "ServerHistoryAnalyzation" branch
+
+
