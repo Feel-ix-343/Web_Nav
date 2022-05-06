@@ -2,6 +2,11 @@ package v1.models
 
 import java.util.UUID.randomUUID
 
+import play.api.libs.json._
+
+case class HistoryVisit(url: String, visits: Int)
+case class User(id: String, history: Seq[HistoryVisit], lastSynced: String)
+
 object UserData {
   private var users = Map[String, User]()
 
@@ -11,6 +16,5 @@ object UserData {
   def newID: String = {
     randomUUID().toString().filter(_ != '-')
   }
-
   def getUsers: Map[String, User] = users
 }
