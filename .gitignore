@@ -1,4 +1,6 @@
 Session.vim
 .metals
+.idea
+extension/.idea
 Session.vim
 web-nav-server/project/*
