@@ -2,6 +2,8 @@
 *The command pallet for the web*
 
 Analyses chrome history and suggests websites related to a search query to make repetitive web navigation faster and easier. <br>
+
+The master branch does not have the server code. Look at the "ServerHistoryAnalyzation" branch under web-nav-server
 ## Example Use Case
 For my school, we use canvas lms to keep track of assignments and grades. However, unlike more public websites, I am not able to get to a classes page simply by using the google search bar. One solution to this is to use bookmarks, however, with the many different classes and link they have, this feels cluttered. I want to be able to look up, for example, "US History Grades", and be displayed a link to the canvas page. That is where this extension comes in to play. 
 
