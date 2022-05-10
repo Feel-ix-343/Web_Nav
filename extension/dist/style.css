@@ -89,7 +89,12 @@ body {
 
     text-decoration: none !important;
 }
-.outLink:hover{
+.outLink:hover {
     transform: scale(1.05);
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+.outLink:focus {
+    transform: scale(1.05);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    outline: none
 }
