@@ -47,7 +47,6 @@ function outputItem(title, url) {
 // Key Command Actions
 // -------------------
 // Used in the input box event listener
-// TODO: Fix the scrolling
 var OutputFocus = /** @class */ (function () {
     function OutputFocus() {
     }

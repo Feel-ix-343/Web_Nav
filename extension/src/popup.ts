@@ -58,7 +58,6 @@ function outputItem(title: string, url: string): HTMLAnchorElement {
 // -------------------
 
 // Used in the input box event listener
-// TODO: Fix the scrolling
 class OutputFocus {
   private static activeOutlink: number
 
