@@ -58,6 +58,7 @@ function outputItem(title: string, url: string): HTMLAnchorElement {
 // -------------------
 
 // Used in the input box event listener
+// TODO: Fix the scrolling
 class OutputFocus {
   private static activeOutlink: number
 
@@ -65,12 +66,15 @@ class OutputFocus {
     (document.getElementsByClassName("outLink")[0] as HTMLAnchorElement).focus()
     // Starts listening for events. THere should not be any other event happening after start was called, so this should work
     this.activeOutlink = -1 // FIXME: Confusing; THe window listener gets called when declared. Need to make activeOutLink -1 to counter this
-    window.addEventListener("keyup", OutputFocus.eventListener)
+    window.addEventListener("keydown", OutputFocus.eventListener)
   }
   static eventListener(ev: KeyboardEvent): void {
+    console.log(ev)
     if (ev.key == "ArrowDown"){
+      ev.preventDefault() // Preventing default scrolling
       OutputFocus.changeFocus(1)
     } else if (ev.key == "ArrowUp") {
+      ev.preventDefault() // Preventing default scrolling
       OutputFocus.changeFocus(-1)
     }
   }

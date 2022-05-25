@@ -47,6 +47,7 @@ function outputItem(title, url) {
 // Key Command Actions
 // -------------------
 // Used in the input box event listener
+// TODO: Fix the scrolling
 var OutputFocus = /** @class */ (function () {
     function OutputFocus() {
     }
@@ -54,13 +55,16 @@ var OutputFocus = /** @class */ (function () {
         document.getElementsByClassName("outLink")[0].focus();
         // Starts listening for events. THere should not be any other event happening after start was called, so this should work
         this.activeOutlink = -1; // FIXME: Confusing; THe window listener gets called when declared. Need to make activeOutLink -1 to counter this
-        window.addEventListener("keyup", OutputFocus.eventListener);
+        window.addEventListener("keydown", OutputFocus.eventListener);
     };
     OutputFocus.eventListener = function (ev) {
+        console.log(ev);
         if (ev.key == "ArrowDown") {
+            ev.preventDefault(); // Preventing default scrolling
             OutputFocus.changeFocus(1);
         }
         else if (ev.key == "ArrowUp") {
+            ev.preventDefault(); // Preventing default scrolling
             OutputFocus.changeFocus(-1);
         }
     };
