@@ -30,7 +30,7 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
     UserData.addUser(User(id, IndexedSeq[HistoryVisit](), "0"))
 
     // Returning the ID to the client for future api calls related directly to them
-    Ok(Json.toJson(UserData.newID))
+    Ok(Json.toJson(id))
   }
 
   def getLastSynced(id: String) = Action {
@@ -54,9 +54,8 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
           // TODO: Double check that the starting date is correct; not totally necessary, but could be usefull
           UserData.getUser(r.id) match {
             case Some(user) => {
-              user.history ++ r.history
+              user.history ++= r.history
               user.lastSynced = r.history(r.history.length - 1).time
-              println(user)
               Ok(Json.toJson(user.history))
             }
             case None => Ok(Json.toJson("User does not exist"))
