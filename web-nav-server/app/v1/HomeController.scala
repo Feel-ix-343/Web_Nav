@@ -35,29 +35,35 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
 
   def getLastSynced(id: String) = Action {
     UserData.getUser(id) match {
+      // Last synced is updated by the syncUser rest call
       case Some(u) => Ok(Json.toJson(u.lastSynced))
       case None => Ok(Json.toJson("User does not exist"))
     }
   }
 
-  def syncUser(id: String) = Action { implicit request =>
+  case class syncUserJson(id: String, history: Seq[HistoryVisit])
+  implicit val syncUserJsonReads = Json.reads[syncUserJson]
+  implicit val syncUserJsonWrites = Json.writes[syncUserJson]
+  def syncUser() = Action { implicit request =>
     // Parse the body
     request.body.asJson.map { body =>
       // Parse the json into scala code
-      Json.fromJson[Seq[HistoryVisit]](body) match {
+      Json.fromJson[syncUserJson](body) match {
         // Success: r is the scala object
         case JsSuccess(r, _) => {
           // TODO: Double check that the starting date is correct; not totally necessary, but could be usefull
-          UserData.getUser(id) match {
+          UserData.getUser(r.id) match {
             case Some(user) => {
-              user.history ++ r
+              user.history ++ r.history
+              user.lastSynced = r.history(r.history.length - 1).time
+              println(user)
               Ok(Json.toJson(user.history))
             }
             case None => Ok(Json.toJson("User does not exist"))
           }
         }
         // Failure
-        case e @ JsError(_) => Ok(Json.toJson("Bad json"))
+        case e @ JsError(_) => Ok(Json.toJson("Bad json request"))
       }
     }.getOrElse {
       Ok("Need to include a body")

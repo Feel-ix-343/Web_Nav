@@ -4,8 +4,8 @@ import java.util.UUID.randomUUID
 
 import play.api.libs.json._
 
-case class HistoryVisit(url: String, visits: Int)
-case class User(id: String, history: Seq[HistoryVisit], lastSynced: String)
+case class HistoryVisit(url: String, visits: Int, time: String)
+case class User(id: String, history: Seq[HistoryVisit], var lastSynced: String)
 
 object UserData {
   private var users = Map[String, User]()
