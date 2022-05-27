@@ -10,15 +10,20 @@ window.addEventListener("DOMContentLoaded", function () {
 // Loading the Search in the input box
 // -----------------------------------
 document.getElementById("inputBox").addEventListener("keyup", function (ev) {
-    console.log(ev.key);
     if (ev.key == "ArrowDown") {
-        console.log(document.getElementsByClassName("outLink"));
         OutputFocus.start();
         return;
     }
-    // TODO: Dont reload on every command, only reload on change
-    chrome.storage.sync.set({ "filter": getFilterElem().value });
-    loadSearch();
+    chrome.storage.sync.get(['filter'], function (r) {
+        console.log("Current val: " + getFilterElem().value);
+        console.log(r);
+        if (r.filter === getFilterElem().value)
+            return;
+        else {
+            chrome.storage.sync.set({ "filter": getFilterElem().value });
+            loadSearch();
+        }
+    });
 });
 function loadSearch() {
     var filter = getFilterElem().value;
@@ -57,7 +62,6 @@ var OutputFocus = /** @class */ (function () {
         window.addEventListener("keydown", OutputFocus.eventListener);
     };
     OutputFocus.eventListener = function (ev) {
-        console.log(ev);
         if (ev.key == "ArrowDown") {
             ev.preventDefault(); // Preventing default scrolling
             OutputFocus.changeFocus(1);
@@ -68,9 +72,7 @@ var OutputFocus = /** @class */ (function () {
         }
     };
     OutputFocus.changeFocus = function (direction) {
-        console.log(direction);
         if (direction === -1) {
-            console.log("up");
             this.activeOutlink += -1;
             if (this.activeOutlink == -1) {
                 document.getElementById("inputBox").focus();
@@ -78,17 +80,12 @@ var OutputFocus = /** @class */ (function () {
                 return;
             }
             document.getElementsByClassName("outLink")[this.activeOutlink].focus();
-            console.log(this.activeOutlink);
         }
         else if (direction === 1) {
-            console.log("down");
-            console.log(this.activeOutlink);
-            console.log(document.getElementsByClassName("outLink").length);
             if (this.activeOutlink == document.getElementsByClassName("outLink").length - 1)
                 return;
             this.activeOutlink += 1;
             document.getElementsByClassName("outLink")[this.activeOutlink].focus();
-            console.log(this.activeOutlink);
         }
     };
     return OutputFocus;
