@@ -1,4 +1,4 @@
-name := """Web-Nav Server"""
+ name := """Web-Nav Server"""
 organization := "server"
 
 version := "1.0-SNAPSHOT"
@@ -9,6 +9,7 @@ scalaVersion := "2.13.8"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "server.controllers._"
