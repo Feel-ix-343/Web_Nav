@@ -6,9 +6,10 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 
 import v1.models.JsonConverters._
 import v1.models._
+import views.html.helper.input
 
 
-class HomeController @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
+class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
   // Need to change this for the new user method
   // def addUserData = Action { implicit request =>
   //   request.body.asJson.map { body =>
@@ -24,10 +25,10 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
   //   }
   // }
 
-  def newUser = Action {
+  def newUser = Action { // TODO: handle possibel case where user already exists
     // Creating the ID and adding to the user database
     val id: String = UserData.newID
-    UserData.addUser(User(id, IndexedSeq[HistoryVisit](), "0"))
+    UserData.addUser(User(id, IndexedSeq[HistoryVisit](), 0))
 
     // Returning the ID to the client for future api calls related directly to them
     Ok(Json.toJson(id))
@@ -41,7 +42,7 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
     }
   }
 
-  case class syncUserJson(id: String, history: Seq[HistoryVisit])
+  case class syncUserJson(id: String, history: Seq[HistoryVisit], time: Int)
   implicit val syncUserJsonReads = Json.reads[syncUserJson]
   implicit val syncUserJsonWrites = Json.writes[syncUserJson]
   def syncUser() = Action { implicit request =>
@@ -55,7 +56,7 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
           UserData.getUser(r.id) match {
             case Some(user) => {
               user.history ++= r.history
-              user.lastSynced = r.history(r.history.length - 1).time
+              user.lastSynced = r.time
               Ok(Json.toJson(user.history))
             }
             case None => Ok(Json.toJson("User does not exist"))
@@ -68,7 +69,25 @@ class HomeController @Inject() (cc: ControllerComponents) extends AbstractContro
       Ok("Need to include a body")
     }
   }
-    // Check that user exists
-    // Check that the last synced date is correct
-    //
+
+  case class searchRequest(id: String, input: String)
+  implicit val syncSearchRequestReads = Json.reads[searchRequest]
+  implicit val syncSearchRequestWrites = Json.writes[searchRequest]
+  def getSearchOutput() = Action { request => 
+    request.body.asJson.map { body => 
+      Json.fromJson[searchRequest](body) match {
+        case JsSuccess(r, _) => {
+          UserData.getUser(r.id) match {
+            case Some(user) => {
+              Ok(Json.toJson[HistoryResponse](HistoryAnalyzation.analyzeHistorySimple(user, r.input))) // TODO: Send response
+            }
+            case None => Ok(Json.toJson("User does not exist"))
+          }
+        }
+        case e @ JsError(_) => Ok(Json.toJson("Bad json request"))
+      }
+    }.getOrElse {
+      Ok("Need to include a body")
+    }
+  }
 }
