@@ -42,7 +42,7 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
     }
   }
 
-  case class syncUserJson(id: String, history: Seq[HistoryVisit], time: Int)
+  case class syncUserJson(id: String, history: Seq[HistoryVisit], time: Long)
   implicit val syncUserJsonReads = Json.reads[syncUserJson]
   implicit val syncUserJsonWrites = Json.writes[syncUserJson]
   def syncUser() = Action { implicit request =>
@@ -63,7 +63,10 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
           }
         }
         // Failure
-        case e @ JsError(_) => Ok(Json.toJson("Bad json request"))
+        case e @ JsError(_) => {
+          println(e)
+          Ok(Json.toJson("Bad json request"))
+        }
       }
     }.getOrElse {
       Ok("Need to include a body")
@@ -73,6 +76,7 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
   case class searchRequest(id: String, input: String)
   implicit val syncSearchRequestReads = Json.reads[searchRequest]
   implicit val syncSearchRequestWrites = Json.writes[searchRequest]
+
   def getSearchOutput() = Action { request => 
     request.body.asJson.map { body => 
       Json.fromJson[searchRequest](body) match {

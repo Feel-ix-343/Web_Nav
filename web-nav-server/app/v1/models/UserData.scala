@@ -4,8 +4,8 @@ import java.util.UUID.randomUUID
 
 import play.api.libs.json._
 
-case class HistoryVisit(lastVisitTime: Int, title: String, typedCount: Int, url: String, visitCount: Int) // A scala copy of the chrome.history.HistoryItem
-case class User(id: String, var history: Seq[HistoryVisit], var lastSynced: Int)
+case class HistoryVisit(id: String, lastVisitTime: Double, title: String, typedCount: Int, url: String, visitCount: Int) // A scala copy of the chrome.history.HistoryItem
+case class User(id: String, var history: Seq[HistoryVisit], var lastSynced: Long)
 
 object UserData {
   private var users = Map[String, User](

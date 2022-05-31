@@ -1,5 +1,7 @@
 package v1.models
 
+import views.html.defaultpages.todo
+
 case class HistoryResponse(items: Seq[HistoryVisit])
 object HistoryAnalyzation {
   def handleDupURLs(history: Seq[HistoryVisit]): Seq[HistoryVisit] = {
@@ -10,20 +12,31 @@ object HistoryAnalyzation {
     history.zipWithIndex.foldRight(Seq[HistoryVisit]())((zip, newSeq) => {
       val historyVisit = zip._1
       val index = zip._2
-      if (!history.drop(index + 1).exists(followingHist => historyVisit.url == followingHist.url)) newSeq.prepended(historyVisit)
+      if (!history.drop(index + 1).exists(followingHist => historyVisit.title == followingHist.title)) newSeq.prepended(historyVisit)
       else newSeq
     })
-
-      }
+  }
   def analyzeHistorySimple(user: User, input: String): HistoryResponse = {
     val history = handleDupURLs(user.history)
+    val inputLower = input.toLowerCase
 
-    val filtered = history.filter(historyVisit => 
-        historyVisit.title.contains(input) || 
-        historyVisit.url.contains(input)) // Replace this with a method that will check if most of the string is containted, but could me missspelled
+    val sorted = history.sortBy(h => {
+      (
+        h.title.toLowerCase.contains(inputLower.toLowerCase),
+        h.url.toLowerCase.contains(inputLower),
+        inputLower.split(" ").count(h.title.toLowerCase.contains(_)),
+        inputLower.split(" ").count(h.url.toLowerCase.contains(_)),
+        h.visitCount,
+        )
+    })(Ordering.Tuple5(
+      Ordering.Boolean.reverse,
+      Ordering.Boolean.reverse,
+      Ordering.Int.reverse,
+      Ordering.Int.reverse,
+      Ordering.Int.reverse,
+      ))
 
-    val sorted = filtered.sortWith((h1, h2) => h1.visitCount >= h2.visitCount)
-
-    HistoryResponse(sorted)
+    HistoryResponse(sorted.slice(0, 10))
   }
+  // TODO: def getUserPaths = todo
 }
