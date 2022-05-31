@@ -1,14 +1,10 @@
 window.addEventListener("DOMContentLoaded", function () {
-    // TODO: Fix this for when the extension is first launched
     chrome.storage.sync.get(['filter'], function (r) {
         getFilterElem().value = r.filter;
         loadSearch();
     });
     document.getElementById("inputBox").focus();
 });
-// ------------------------------
-// Loading the Search in the input box
-// ---------------------------
 document.getElementById("inputBox").addEventListener("keyup", function () {
     chrome.storage.sync.set({ "filter": getFilterElem().value });
     loadSearch();
