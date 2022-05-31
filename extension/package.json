@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -w src/* --outDir ./dist"
+    "build": "tsc -w"
   },
   "keywords": [],
   "author": "",
