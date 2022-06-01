@@ -7,6 +7,10 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import v1.models.JsonConverters._
 import v1.models._
 import views.html.helper.input
+import views.html.defaultpages.badRequest
+import play.api.libs.json.JsValue
+import play.api.libs.json.OWrites
+import play.api.libs.json.Reads
 
 
 class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
@@ -41,57 +45,56 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
       case None => Ok(Json.toJson("User does not exist"))
     }
   }
-
-  case class syncUserJson(id: String, history: Seq[HistoryVisit], time: Long)
-  implicit val syncUserJsonReads = Json.reads[syncUserJson]
-  implicit val syncUserJsonWrites = Json.writes[syncUserJson]
-  def syncUser() = Action { implicit request =>
-    // Parse the body
-    request.body.asJson.map { body =>
-      // Parse the json into scala code
-      Json.fromJson[syncUserJson](body) match {
-        // Success: r is the scala object
-        case JsSuccess(r, _) => {
-          // TODO: Double check that the starting date is correct; not totally necessary, but could be usefull
-          UserData.getUser(r.id) match {
-            case Some(user) => {
-              user.history ++= r.history
-              user.lastSynced = r.time
-              Ok(Json.toJson(user.history))
-            }
-            case None => Ok(Json.toJson("User does not exist"))
-          }
-        }
-        // Failure
-        case e @ JsError(_) => {
-          println(e)
-          Ok(Json.toJson("Bad json request"))
-        }
-      }
+  def debugSyncHistory() = Action { implicit request => 
+    request.body.asJson.map { body => 
+      Ok("Written")
     }.getOrElse {
-      Ok("Need to include a body")
+      BadRequest("Needs to be json")
     }
   }
 
-  case class searchRequest(id: String, input: String)
-  implicit val syncSearchRequestReads = Json.reads[searchRequest]
-  implicit val syncSearchRequestWrites = Json.writes[searchRequest]
+  case class SyncUserJson(id: String, history: Seq[HistoryVisit], time: Long)
+  implicit val syncUserJsonReads = Json.reads[SyncUserJson]
+  implicit val syncUserJsonWrites = Json.writes[SyncUserJson]
 
-  def getSearchOutput() = Action { request => 
-    request.body.asJson.map { body => 
-      Json.fromJson[searchRequest](body) match {
-        case JsSuccess(r, _) => {
-          UserData.getUser(r.id) match {
-            case Some(user) => {
-              Ok(Json.toJson[HistoryResponse](HistoryAnalyzation.analyzeHistorySimple(user, r.input))) // TODO: Send response
-            }
-            case None => Ok(Json.toJson("User does not exist"))
+  def syncUser() = Action { implicit request =>
+    useJson { implicit jsval: JsValue => 
+      parseJson[SyncUserJson] { syncUserJson: SyncUserJson =>
+        UserData.getUser(syncUserJson.id) match {
+          case Some(user) => {
+            user.history ++= syncUserJson.history
+            user.lastSynced = syncUserJson.time
+            Ok(s"User $syncUserJson.id synced")
+          }
+          case None => BadRequest("User does not exist")
+        }
+      }
+    }
+  }
+
+  case class SearchRequest(id: String, input: String)
+  implicit val syncSearchRequestReads = Json.reads[SearchRequest]
+  implicit val syncSearchRequestWrites = Json.writes[SearchRequest]
+
+  def getSearchOutput() = Action { implicit request => 
+    useJson { implicit jsval: JsValue =>
+      parseJson[SearchRequest] { search => 
+          UserData.getUser(search.id) match {
+            case Some(user) => Ok(Json.toJson[HistoryResponse](HistoryAnalyzation.analyzeHistorySimple(user, search.input)))
+            case None => BadRequest("User does not exist")
           }
         }
-        case e @ JsError(_) => Ok(Json.toJson("Bad json request"))
       }
-    }.getOrElse {
-      Ok("Need to include a body")
+  }
+
+  private def useJson(action: JsValue => Result)(implicit request: Request[AnyContent]): Result = 
+    request.body.asJson.map(action(_))
+      .getOrElse(BadRequest("Need to include JSON body"))
+
+  private def parseJson[T](action: T => Result)(implicit body: JsValue, reads: Reads[T]): Result = {
+    Json.fromJson[T](body) match {
+      case JsSuccess(r, _) => action(r)
+      case JsError(_) => BadRequest("Bad json request")
     }
   }
 }
