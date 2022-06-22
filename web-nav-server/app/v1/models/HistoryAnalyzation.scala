@@ -4,6 +4,12 @@ import views.html.defaultpages.todo
 
 case class HistoryResponse(items: Seq[HistoryVisit])
 object HistoryAnalyzation {
+  /**
+    * Returns the history with duplicates removed and the newest link kept
+    *
+    * @param history
+    * @return
+    */
   def handleDupURLs(history: Seq[HistoryVisit]): Seq[HistoryVisit] = {
     // Do soem kind of analyzation. Need to do some research for this step
     // Just going to start it off simple
@@ -16,20 +22,24 @@ object HistoryAnalyzation {
       else newSeq
     })
   }
-  def analyzeHistorySimple(user: User, input: String): HistoryResponse = {
-    val history = handleDupURLs(user.history)
+  def analyzeHistorySimple(history: Seq[HistoryVisit], input: String): HistoryResponse = {
+    val historyNoDups = handleDupURLs(history)
     val inputLower = input.toLowerCase
 
-    val sorted = history.sortBy(h => {
+    val historyFiltered = historyNoDups.filter(!_.title.contains("Google Search"))
+
+    val sorted = historyFiltered.sortBy(h => {
       (
-        h.title.toLowerCase.contains(inputLower.toLowerCase),
-        h.url.toLowerCase.contains(inputLower),
+        h.title.toLowerCase.contains(inputLower),
         inputLower.split(" ").count(h.title.toLowerCase.contains(_)),
-        inputLower.split(" ").count(h.url.toLowerCase.contains(_)),
+        (for (i <- 1 to inputLower.length()) yield {
+          inputLower.sliding(i).foldLeft(0) {(score, word) =>  
+            if (h.title.toLowerCase.contains(word)) Math.pow(i, 2).toInt else 0 
+          }
+        }).sum,
         h.visitCount,
-        )
-    })(Ordering.Tuple5(
-      Ordering.Boolean.reverse,
+  )
+    })(Ordering.Tuple4(
       Ordering.Boolean.reverse,
       Ordering.Int.reverse,
       Ordering.Int.reverse,

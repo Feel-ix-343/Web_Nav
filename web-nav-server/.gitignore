@@ -9,3 +9,6 @@ target
 /.bloop
 /.metals
 /RUNNING_PID
+
+debugHistory.json
+WebNavModel.nb

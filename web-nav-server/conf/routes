@@ -4,8 +4,10 @@
 # ~~~~
 
 # An example controller showing a sample home page
+GET     /index                      v1.App.index()
 GET     /newUser                     v1.App.newUser()
 GET     /getLastSynced              v1.App.getLastSynced(id)
 POST    /syncUser                   v1.App.syncUser()
 POST    /search                     v1.App.getSearchOutput()
+POST    /debugSyncHistory           v1.App.debugSyncHistory()
 

@@ -11,23 +11,30 @@ import views.html.defaultpages.badRequest
 import play.api.libs.json.JsValue
 import play.api.libs.json.OWrites
 import play.api.libs.json.Reads
+import com.fasterxml.jackson.annotation.JsonValue
 
+import java.nio.file.{Paths, Files}
+import java.nio.charset.StandardCharsets
+
+
+case class SyncUserJson(id: String, history: Seq[HistoryVisit], time: Long)
+case class SearchRequest(id: String, input: String)
 
 class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
-  // Need to change this for the new user method
-  // def addUserData = Action { implicit request =>
-  //   request.body.asJson.map { body =>
-  //     Json.fromJson[User](body) match {
-  //       case JsSuccess(ud, _) => {
-  //         UserData.addUser(ud)
-  //         Ok(Json.toJson(UserData.getUsers))
-  //       }
-  //       case e @ JsError(_) => Ok(Json.toJson(false))
-  //     }
-  //   }.getOrElse {
-  //     Ok(Json.toJson("Bad"))
-  //   }
-  // }
+  private def useJson(action: JsValue => Result)(implicit request: Request[AnyContent]): Result = 
+    request.body.asJson.map(action(_))
+      .getOrElse(BadRequest("Need to include JSON body"))
+
+  private def parseJson[T](action: T => Result)(implicit body: JsValue, reads: Reads[T]): Result = {
+    Json.fromJson[T](body) match {
+      case JsSuccess(r, _) => action(r)
+      case JsError(_) => BadRequest("Bad json request")
+    }
+  }
+
+  def index = Action {
+    Ok("Hello user")
+  }
 
   def newUser = Action { // TODO: handle possibel case where user already exists
     // Creating the ID and adding to the user database
@@ -45,15 +52,20 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
       case None => Ok(Json.toJson("User does not exist"))
     }
   }
+
+  val debug = true; // TODO: Turn this off when in production
+  // Files is used by tests
   def debugSyncHistory() = Action { implicit request => 
-    request.body.asJson.map { body => 
-      Ok("Written")
-    }.getOrElse {
-      BadRequest("Needs to be json")
+    useJson { jsval: JsValue =>
+      if (debug == false) BadRequest("Not authorized")
+
+      Files.deleteIfExists(Paths.get("debugHistory.json"))
+      Files.write(Paths.get("debugHistory.json"), jsval.toString().getBytes(StandardCharsets.UTF_8))
+
+      Ok("Debug File Written")
     }
   }
 
-  case class SyncUserJson(id: String, history: Seq[HistoryVisit], time: Long)
   implicit val syncUserJsonReads = Json.reads[SyncUserJson]
   implicit val syncUserJsonWrites = Json.writes[SyncUserJson]
 
@@ -72,7 +84,6 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
     }
   }
 
-  case class SearchRequest(id: String, input: String)
   implicit val syncSearchRequestReads = Json.reads[SearchRequest]
   implicit val syncSearchRequestWrites = Json.writes[SearchRequest]
 
@@ -80,21 +91,10 @@ class App @Inject() (cc: ControllerComponents) extends AbstractController(cc) {
     useJson { implicit jsval: JsValue =>
       parseJson[SearchRequest] { search => 
           UserData.getUser(search.id) match {
-            case Some(user) => Ok(Json.toJson[HistoryResponse](HistoryAnalyzation.analyzeHistorySimple(user, search.input)))
+            case Some(user) => Ok(Json.toJson[HistoryResponse](HistoryAnalyzation.analyzeHistorySimple(user.history, search.input)))
             case None => BadRequest("User does not exist")
           }
         }
       }
-  }
-
-  private def useJson(action: JsValue => Result)(implicit request: Request[AnyContent]): Result = 
-    request.body.asJson.map(action(_))
-      .getOrElse(BadRequest("Need to include JSON body"))
-
-  private def parseJson[T](action: T => Result)(implicit body: JsValue, reads: Reads[T]): Result = {
-    Json.fromJson[T](body) match {
-      case JsSuccess(r, _) => action(r)
-      case JsError(_) => BadRequest("Bad json request")
-    }
   }
 }
