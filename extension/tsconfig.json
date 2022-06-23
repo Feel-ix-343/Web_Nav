@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "removeComments": true,
+    "module": "es6",
+    "moduleResolution": "node",
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules"]
+}
