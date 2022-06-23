@@ -4,3 +4,9 @@ extension/.idea
 Session.vim
 web-nav-server/*
 
+
+
+# Added by cargo
+
+/target
+/Cargo.lock
