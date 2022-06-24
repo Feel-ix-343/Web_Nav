@@ -1,8 +1,9 @@
+const CopyWebpackPlugin = require("copy-webpack-plugin")
 const path = require('path');
 
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   experiments: {
     asyncWebAssembly: true
   },
@@ -22,6 +23,13 @@ module.exports = {
     background: './src/background.ts',
     popup: './src/popup.ts'
   },
+  plugins: [
+    new CopyWebpackPlugin({patterns: [
+      {from: './public/manifest.json'},
+      {from: './public/popup.html'},
+      {from: './public/style.css'},
+    ]}),
+  ],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js'

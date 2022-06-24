@@ -1,4 +1,5 @@
 
+
 window.addEventListener("DOMContentLoaded", () => {
 	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {

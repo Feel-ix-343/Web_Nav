@@ -1,5 +1,5 @@
-import * as wasm from '../../webnav_analysis/pkg'
+import * as webnav from 'webnav_analysis'
+webnav.log_hist(chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
 
-let x = wasm.add(2, 3)
 
-console.log(x)
+

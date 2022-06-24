@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+body {
+    max-width: 400px;
+    min-width: 400px;
+    max-height: 500px;
+    min-height: 500px;
+    font-family: 'Mulish', sans-serif;
+
+    margin: 0;
+}
+
+
+#header {
+    height: 85px;
+    display: grid;
+    justify-content: center;
+
+    background-color: coral;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    padding-bottom: 25px;
+
+    position: fixed;
+    width: 100vw;
+
+    z-index: 2;
+}
+
+#heading {
+    font-weight: 800;
+    font-size: 32px;
+    color: white;
+
+    justify-self: center;
+}
+
+#inputBox {
+    width: 240px;
+    height: 50px;
+
+    text-align: center;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+    border-radius: 50px;
+    outline: none;
+    background-color: white;
+    border-style: none;
+    font-weight: 300;
+
+    transition: all 0.3s ease-in-out;
+}
+#inputBox:focus {
+    transform: scale(1.05);
+    box-shadow: rgba(255, 75, 75, 0.32) 0px 7px 29px 0px;
+}
+
+#data {
+    padding-top: 140px;
+    display: grid;
+    justify-content: center;
+
+    /* TODO: Need to fix positioning bugs*/
+    margin: auto;
+}
+
+
+.outLink {
+    display: block;
+    width: 80vw;
+    margin-top: 15px;
+    text-align: center;
+    line-height: 50px;
+
+
+    padding-left: 10px;
+    padding-right: 10px;
+
+    background-color: white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+    border-radius: 10px;
+    transition: all 0.1s ease-in-out;
+
+    text-decoration: none !important;
+}
+.outLink:hover {
+    transform: scale(1.05);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+.outLink:focus {
+    transform: scale(1.05);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    outline: none
+}
