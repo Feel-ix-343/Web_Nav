@@ -1,0 +1,14 @@
+logs
+target
+/.bsp
+/.idea
+/.idea_modules
+/.classpath
+/.project
+/.settings
+/.bloop
+/.metals
+/RUNNING_PID
+
+debugHistory.json
+WebNavModel.nb
