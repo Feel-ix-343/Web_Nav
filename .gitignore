@@ -1,0 +1,9 @@
+Session.vim
+.metals
+.idea
+extension/.idea
+Session.vim
+web-nav-server/project/project/*
+web-nav-server/project/target/*
+web-nav-server/project/.bloop/*
+
