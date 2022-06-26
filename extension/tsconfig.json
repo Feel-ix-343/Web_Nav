@@ -1,8 +1,0 @@
-
-{
-  "compilerOptions": {
-    "removeComments": true,
-    "outDir": "./dist"
-  },
-  "include": ["src/*"]
-}
