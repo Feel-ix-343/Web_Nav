@@ -6,5 +6,5 @@ Session.vim
 web-nav-server/project/project/*
 web-nav-server/project/target/*
 web-nav-server/project/.bloop/*
-wabnav_analysis
+webnav_analysis
 
