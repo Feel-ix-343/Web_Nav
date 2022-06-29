@@ -9,9 +9,14 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2.81"
+wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
 js-sys = "0.3.58"
 wasm-bindgen-futures = "0.4.31"
+wasm-bindgen-test = "0.3.0"
+itertools = "0.8.0"
+serde-wasm-bindgen = "0.1.0"
+serde = { version = "1.0", features = ["derive"]}
+
 
 [profile.release]
 lto = true

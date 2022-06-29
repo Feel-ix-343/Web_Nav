@@ -1,9 +1,10 @@
+use js_sys::JsString;
 use wasm_bindgen::prelude::*;
 
 mod history_graph;
-use history_graph::HistoryGraph;
+use history_graph::{HistoryGraph, HistoryGraphItem};
 
-mod filter_scoring;
+// mod filter_scoring;
 
 
 
@@ -27,7 +28,7 @@ macro_rules! console_log {
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(typescript_type = "chrome.history.HistoryItem")]
-    #[derive(Debug)]
+    #[derive(Debug, Default, PartialEq)]
     pub type HistoryItem;
 
     #[wasm_bindgen(method, getter)]
@@ -41,21 +42,45 @@ extern "C" {
 }
 
 
-
+#[wasm_bindgen]
+pub struct SearchProcess {
+    history_graph: HistoryGraph,
+}
 
 #[wasm_bindgen]
-/// Getting the search results. Accepts a search filter, already created graph, and history array
-/// from the chrome.history.search api. Returns a list of Top history Item matches
-pub fn get_search_results(filter: &str, history_graph: HistoryGraph, history_arr: Vec<HistoryItem>) -> Vec<HistoryItem> {
-    console_log!("{:?}", history_arr[0]);
-    console_log!("Title: {:?}", history_arr[0].title());
-    console_log!("Url: {:?}", history_arr[0].url());
-    console_log!("VisitCount: {:?}", history_arr[0].visit_count());
+impl SearchProcess {
+    #[wasm_bindgen(constructor)]
+    pub fn new (history: Vec<HistoryItem>) -> SearchProcess {
+        SearchProcess { history_graph: HistoryGraph::new(history) }
+    }
 
-    todo!();
+    #[wasm_bindgen]
+    pub fn get_graph(&self) -> Result<JsValue, JsValue> {
+
+        let js_value = serde_wasm_bindgen::to_value(&self.history_graph.data)?;
+
+        Ok(js_value)
+    }
+
+    #[wasm_bindgen]
+    pub fn get_edges(&self, title: String, url: String) -> Result<JsValue, JsValue> {
+        let q = HistoryGraphItem {
+            title,
+            url
+        };
+
+        let js_value = serde_wasm_bindgen::to_value(&self.history_graph.get_edges(q))?;
+
+        Ok(js_value)
+    }
 }
 
 
 
 
 
+
+#[wasm_bindgen]
+pub fn test() {
+    console_log!("Hello from wasm")
+}
