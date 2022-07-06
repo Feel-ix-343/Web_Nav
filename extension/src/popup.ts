@@ -1,3 +1,17 @@
+import * as wasm from 'webnav_analysis'
+chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+
+  let searchProcess = new wasm.WebAnalyzation(r)
+  // console.log(searchProcess.get_graph())
+
+  console.log(searchProcess.get_edges("YouTube", "https://www.youtube.com/", 141))
+
+  let result = searchProcess.get_search_results("American Literature")
+
+  console.log(result)
+})
+
+
 window.addEventListener("DOMContentLoaded", () => {
 	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
