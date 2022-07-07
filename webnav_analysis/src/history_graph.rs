@@ -10,7 +10,7 @@ pub struct HistoryGraph {
 
 
 impl HistoryGraph {
-    pub fn new(history_arr: &Vec<RustHistoryItem>) -> HistoryGraph { // TODO: Make sure these are just bindings and not a full copy in js
+    pub fn new(history_arr: &Vec<RustHistoryItem>) -> HistoryGraph { 
 
         let grouped_by_baseurl: BTreeMap<String, Vec<&RustHistoryItem>> = history_arr
             .iter()
@@ -193,6 +193,10 @@ pub mod tests {
     }
 
 }
+
+
+
+
 
 
 

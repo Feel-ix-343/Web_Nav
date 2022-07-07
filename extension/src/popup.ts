@@ -1,15 +1,15 @@
 import * as wasm from 'webnav_analysis'
-chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-
-  let searchProcess = new wasm.WebAnalyzation(r)
-  // console.log(searchProcess.get_graph())
-
-  console.log(searchProcess.get_edges("YouTube", "https://www.youtube.com/", 141))
-
-  let result = searchProcess.get_search_results("American Literature")
-
-  console.log(result)
-})
+// chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+// 
+//   let searchProcess = new wasm.WebAnalyzation(r)
+//   // console.log(searchProcess.get_graph())
+// 
+//   console.log(searchProcess.get_edges("YouTube", "https://www.youtube.com/", 141))
+// 
+//   let result = searchProcess.get_search_results("American Literature")
+// 
+//   console.log(result)
+// })
 
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -50,12 +50,56 @@ function loadSearch(): void {
   //
   searchOutput.innerHTML = ""
 
-  chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
-    r.forEach(h => {
-      searchOutput.appendChild(outputItem(h.title!, h.url!))
+  chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+
+    let searchProcess = new wasm.WebAnalyzation(r)
+
+    let result = searchProcess.get_search_results(filter)
+
+    console.log(result)
+
+    result.forEach(h => {
+      searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
+      console.log(searchProcess.get_edges(h.history_item.title!, h.history_item.url!, h.history_item.visit_count))
     })
   })
+
+
+  // chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
+  //   r.forEach(h => {
+  //     searchOutput.appendChild(outputItem(h.title!, h.url!))
+  //   })
+  // })
 }
+
+// function loadSearch(): void {
+//   const filter = getFilterElem().value
+//   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
+// 
+//   // TODO: Load the difference instead of reloading everything
+//   //
+//   searchOutput.innerHTML = ""
+// 
+//   chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+// 
+//     let searchProcess = new wasm.WebAnalyzation(r)
+// 
+//     let result = searchProcess.get_search_results(filter)
+// 
+//     console.log(result)
+// 
+//     result.forEach(h => {
+//       searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
+//     })
+//   })
+// 
+// 
+//   // chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
+//   //   r.forEach(h => {
+//   //     searchOutput.appendChild(outputItem(h.title!, h.url!))
+//   //   })
+//   // })
+// }
 
 function getFilterElem(): HTMLInputElement {
   return document.getElementById("inputBox") as HTMLInputElement

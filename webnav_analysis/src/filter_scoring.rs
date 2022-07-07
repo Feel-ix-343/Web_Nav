@@ -15,8 +15,6 @@ pub fn filter_match_score(filter: &String, history_graph: &HistoryGraph, history
 
 
 
-
-
     let matches = matches(&filter_list, &history_title_list);
 
     // console_log!("{filter} {:?} {:?}", history_item, matches);
@@ -53,18 +51,20 @@ pub fn filter_match_score(filter: &String, history_graph: &HistoryGraph, history
 fn matches<'a>(filter_list: &'a Vec<&str>, history_title_list: &'a Vec<&str>) -> Vec<Vec<&'a str>> {
     // Generating a list of possible sublists, and substrings of words to build better search matches
 
-    let all_filter_permutations = (1..=filter_list.len()) // just sorry
+    let all_filter_permutations: Vec<Vec<&str>> = (1..=filter_list.len()) // Making permutations of all lengths of filter_list
         .flat_map(|l| {
-            filter_list.into_iter() // TODO: Dont do this.... 
-                .permutations(l)
-                .map(|w| w.into_iter().map(|w| *w).collect_vec()) // TODO: FIX FIX FIX FIX TRASH AF
+            filter_list.into_iter()
+                .permutations(l) // Why cant this thing make a damn copy? :(
+                .map(|v| v.iter().map(|x| **x).collect_vec()) // Copying the reference :( -> :)
+                .collect_vec()
         })
+        .collect();
+
+    let filter_subsub_lists: Vec<Vec<&str>> = 
+        all_filter_permutations.into_iter()
+        .chain(word_partitions(filter_list).into_iter()) 
         .collect_vec();
 
-    let filter_subsub_lists = 
-        all_filter_permutations.into_iter()
-        .chain(word_partitions(filter_list).into_iter().map(|w| vec![w])) // TODO: This is probably bad
-        .collect_vec();
 
     println!("Filter: {:?}", filter_subsub_lists);
 
@@ -79,10 +79,10 @@ fn matches<'a>(filter_list: &'a Vec<&str>, history_title_list: &'a Vec<&str>) ->
 
 
     // Getting intersections of produced lists
-    filter_subsub_lists.iter()
+    return filter_subsub_lists.into_iter()
         .fold(Vec::new(), |mut v, i| {
             if history_title_sub_lists.contains(&i.as_slice()) {
-                v.push(i.to_owned()); // TODO: This is also probably bad
+                v.push(i);
                 v
             } else {
                 v
@@ -92,16 +92,16 @@ fn matches<'a>(filter_list: &'a Vec<&str>, history_title_list: &'a Vec<&str>) ->
 
 
 /// Take a list of words from filter split at every space, and returs all substrings of all words
-fn word_partitions<'a>(filter_list: &'a Vec<&str>) -> Vec<&'a str> {
+fn word_partitions<'a>(filter_list: &'a Vec<&str>) -> Vec<Vec<&'a str>> {
     filter_list
         .iter()
         .flat_map(|word| {
-            let mut word_partitions: Vec<&str> = Vec::new();
+            let mut word_partitions: Vec<Vec<&str>> = Vec::new();
 
             // Sliding through partitions of the word to get all possible substrings
             for i in 3..=word.len() { // SHould be 3 because, who needs substring shorter (Abbreviations of words)
                 for j in 0..=word.len()-i {
-                    word_partitions.push(word.get(j..i+j).expect("Opps.."));
+                    word_partitions.push(vec![word.get(j..i+j).expect("Opps..")]);
                 }
             }
 
