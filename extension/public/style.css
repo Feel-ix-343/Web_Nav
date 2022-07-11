@@ -54,6 +54,7 @@ body {
     font-weight: 300;
 
     transition: all 0.3s ease-in-out;
+    font-family: 'Mulish', sans-serif;
 }
 #inputBox:focus {
     transform: scale(1.05);
@@ -88,6 +89,7 @@ body {
     transition: all 0.1s ease-in-out;
 
     text-decoration: none !important;
+    font-family: 'Mulish', sans-serif;
 }
 .outLink:hover {
     transform: scale(1.05);

@@ -5,7 +5,8 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   experiments: {
-    asyncWebAssembly: true
+    asyncWebAssembly: true,
+    topLevelAwait: true
   },
   module: {
     rules: [

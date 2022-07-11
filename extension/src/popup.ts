@@ -11,12 +11,33 @@ import * as wasm from 'webnav_analysis'
 //   console.log(result)
 // })
 
+// Thread pool initialization with the given number of threads
+// (pass `navigator.hardwareConcurrency` if you want to use all cores).
+// await initThreadPool(navigator.hardwareConcurrency);
+
+class searchProcessJS {
+  private static searchProcessPromise = chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+    return new wasm.WebAnalyzation(r);
+  })
+
+  private static searchProcess: wasm.WebAnalyzation = null;
+
+  static async getSearchProcess() {
+    if (searchProcessJS.searchProcess === null) searchProcessJS.searchProcess = await searchProcessJS.searchProcessPromise
+    return searchProcessJS.searchProcess
+  }
+}
+
+chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
+  return new wasm.WebAnalyzation(r);
+})
+
+
 
 window.addEventListener("DOMContentLoaded", () => {
 	// TODO: Fix this for when the extension is first launched
   chrome.storage.sync.get(['filter'], (r) => {
-    getFilterElem().value = r.filter
-    loadSearch()
+    searchProcessJS.getSearchProcess().then((s) => loadSearch(s))
   })
 
   document.getElementById("inputBox").focus()
@@ -32,17 +53,15 @@ document.getElementById("inputBox")!.addEventListener("keyup", (ev) => {
     return
   }
   chrome.storage.sync.get(['filter'], (r) => {
-    console.log("Current val: " + getFilterElem().value)
-    console.log(r)
     if (r.filter === getFilterElem().value) return 
     else {
       chrome.storage.sync.set({ "filter": getFilterElem().value })
-      loadSearch()
+      searchProcessJS.getSearchProcess().then((s) => loadSearch(s))
     }
   })
 })
 
-function loadSearch(): void {
+function loadSearch(searchProcess: wasm.WebAnalyzation): void {
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
 
@@ -51,55 +70,15 @@ function loadSearch(): void {
   searchOutput.innerHTML = ""
 
   chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-
-    let searchProcess = new wasm.WebAnalyzation(r)
-
     let result = searchProcess.get_search_results(filter)
-
-    console.log(result)
 
     result.forEach(h => {
       searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
-      console.log(searchProcess.get_edges(h.history_item.title!, h.history_item.url!, h.history_item.visit_count))
     })
   })
-
-
-  // chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
-  //   r.forEach(h => {
-  //     searchOutput.appendChild(outputItem(h.title!, h.url!))
-  //   })
-  // })
 }
 
-// function loadSearch(): void {
-//   const filter = getFilterElem().value
-//   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
-// 
-//   // TODO: Load the difference instead of reloading everything
-//   //
-//   searchOutput.innerHTML = ""
-// 
-//   chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-// 
-//     let searchProcess = new wasm.WebAnalyzation(r)
-// 
-//     let result = searchProcess.get_search_results(filter)
-// 
-//     console.log(result)
-// 
-//     result.forEach(h => {
-//       searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
-//     })
-//   })
-// 
-// 
-//   // chrome.history.search({ text: filter, maxResults: 100000, startTime: 987532627000 }).then(r => {
-//   //   r.forEach(h => {
-//   //     searchOutput.appendChild(outputItem(h.title!, h.url!))
-//   //   })
-//   // })
-// }
+
 
 function getFilterElem(): HTMLInputElement {
   return document.getElementById("inputBox") as HTMLInputElement

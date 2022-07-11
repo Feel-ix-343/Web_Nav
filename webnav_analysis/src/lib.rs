@@ -1,9 +1,11 @@
 use itertools::Itertools;
-use wasm_timer::Instant;
 
-use js_sys::JsString;
-use serde::{Deserialize, Serialize};
-use wasm_bindgen::{prelude::*, JsCast};
+
+// use rayon::prelude::*;
+// pub use::wasm_bindgen_rayon::init_thread_pool;
+
+use serde::Serialize;
+use wasm_bindgen::prelude::*;
 
 use history_graph::HistoryGraph;
 
@@ -114,14 +116,16 @@ impl WebAnalyzation {
 
         let now = wasm_timer::Instant::now();
         // Scores all of the history items, and returns the index as the last tuple item
-        let match_scoring = self.history_items.iter().map(|h| MatchResult {
+        let match_scoring: Vec<MatchResult> = self.history_items.iter().map(|h| MatchResult {
             score: filter_scoring::filter_match_score(&filter, &self.history_graph, h),
             history_item: &h
-        }).collect_vec();
+        }).collect();
+
 
         console_log!("Match scoring took {}ms", now.elapsed().as_millis());
 
         let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
+
         console_log!("Sorting took: {}ms", now.elapsed().as_millis());
 
         // let r = self.history_items.iter().sorted_by_key(|&x| {
