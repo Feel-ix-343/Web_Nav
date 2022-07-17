@@ -1,4 +1,5 @@
 
+use rayon::prelude::*;
 use std::collections::BTreeMap;
 use crate::RustHistoryItem;
 
@@ -22,7 +23,7 @@ impl HistoryGraph {
             });
 
         let grouped_by_baseurl_with_depths: BTreeMap<&String, BTreeMap<u32, Vec<&RustHistoryItem>>> = grouped_by_baseurl
-            .iter()
+            .par_iter()
             .map(|(baseurl, history_items)| {
                 (baseurl, history_items
                     .iter()
@@ -37,7 +38,7 @@ impl HistoryGraph {
 
         // A graph rule is something like Link -> Link, or in this case (Link, Link). I did my modeling in mathematica, and this is how it is
         let baseurl_graph_rules: BTreeMap<&String, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
-            .iter()
+            .par_iter()
             .map(|(base, history_items)| {
                 let base_with_depths = &grouped_by_baseurl_with_depths[base];
                 (base, base_with_links(base_with_depths, history_items))

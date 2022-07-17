@@ -18,11 +18,12 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", ".wasm"],
   },
   entry: {
     background: './src/background.ts',
-    popup: './src/popup.ts'
+    popup: './src/popup.ts',
+    worker: './src/worker.ts'
   },
   plugins: [
     new CopyWebpackPlugin({patterns: [

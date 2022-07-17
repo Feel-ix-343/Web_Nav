@@ -1,82 +1,90 @@
+import * as Comlink from "comlink";
+
 import * as wasm from 'webnav_analysis'
-// chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-// 
-//   let searchProcess = new wasm.WebAnalyzation(r)
-//   // console.log(searchProcess.get_graph())
-// 
-//   console.log(searchProcess.get_edges("YouTube", "https://www.youtube.com/", 141))
-// 
-//   let result = searchProcess.get_search_results("American Literature")
-// 
-//   console.log(result)
-// })
 
-// Thread pool initialization with the given number of threads
-// (pass `navigator.hardwareConcurrency` if you want to use all cores).
-// await initThreadPool(navigator.hardwareConcurrency);
+export type HistoryItem = chrome.history.HistoryItem
 
-class searchProcessJS {
-  private static searchProcessPromise = chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-    return new wasm.WebAnalyzation(r);
-  })
-
-  private static searchProcess: wasm.WebAnalyzation = null;
-
-  static async getSearchProcess() {
-    if (searchProcessJS.searchProcess === null) searchProcessJS.searchProcess = await searchProcessJS.searchProcessPromise
-    return searchProcessJS.searchProcess
-  }
-}
-
-chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-  return new wasm.WebAnalyzation(r);
+// Initialize webworker. This should load before anything else
+const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+  type: "module"
 })
+const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
 
 
 
-window.addEventListener("DOMContentLoaded", () => {
-	// TODO: Fix this for when the extension is first launched
-  chrome.storage.sync.get(['filter'], (r) => {
-    searchProcessJS.getSearchProcess().then((s) => loadSearch(s))
-  })
-
+// Start of the application: Create the graph of user history and previos load any searches from chrome memory
+window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("inputBox").focus()
+  workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
+	// // TODO: Fix this for when the extension is first launched
+  // chrome.storage.sync.get(['filter'], (r) => {
+  //   // TODO: FIX
+  //   document.getElementById("inputBox").textContent = r.filter
+
+  //   loadSearch()
+  // })
+
 })
+
+
+
 
 
 // -----------------------------------
 // Loading the Search in the input box
 // -----------------------------------
 document.getElementById("inputBox")!.addEventListener("keyup", (ev) => {
+  // Navigating previous results through arrow keys
   if (ev.key == "ArrowDown") {
     OutputFocus.start()
     return
   }
+  // Normal search functionality
   chrome.storage.sync.get(['filter'], (r) => {
     if (r.filter === getFilterElem().value) return 
     else {
       chrome.storage.sync.set({ "filter": getFilterElem().value })
-      searchProcessJS.getSearchProcess().then((s) => loadSearch(s))
+
+      loadSearch()
     }
   })
 })
 
-function loadSearch(searchProcess: wasm.WebAnalyzation): void {
+
+
+async function loadSearch() {
+
+  console.log("Worker loaded")
+
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
 
-  // TODO: Load the difference instead of reloading everything
-  //
+
+  let response = await workerAPI.search(filter)
+
+  console.log(response)
+
   searchOutput.innerHTML = ""
-
-  chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }).then(r => {
-    let result = searchProcess.get_search_results(filter)
-
-    result.forEach(h => {
-      searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
-    })
+  response.forEach(h => {
+    searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
   })
+
+
+  // const searchAndLoad = new Promise(async (resolve, reject) => {
+  //   let response = await workerAPI.search(filter)
+  //   searchOutput.innerHTML = ""
+  //   response.forEach(h => {
+  //     searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
+  //   })
+  //   console.log("Search finished for cancelation id " + cancelation.getId())
+  //   resolve("Done")
+  // })
+
+  // Promise.race([cancelationPromise, searchAndLoad]).then(x => {
+  //   console.log("Cancelation " + cancelation.getId() + " is finished with resolution: " + x)
+  // })
 }
+
 
 
 

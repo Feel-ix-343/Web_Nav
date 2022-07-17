@@ -15,14 +15,15 @@
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
-    "webpack": "^5.66.0",
+    "webpack": "^5.72.0",
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
     "comlink": "^4.3.1",
+    "wasm-loader": "^1.3.0",
     "wasm-server": "0.0.4",
     "webnav_analysis": "file:../webnav_analysis/pkg",
-    "webpack": "4.43.0",
-    "webpack-cli": "3.3.11"
+    "webpack-cli": "3.3.11",
+    "worker-plugin": "^5.0.1"
   }
 }

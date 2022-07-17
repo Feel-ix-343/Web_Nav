@@ -1,8 +1,8 @@
 use itertools::Itertools;
 
 
-// use rayon::prelude::*;
-// pub use::wasm_bindgen_rayon::init_thread_pool;
+use rayon::prelude::*;
+pub use::wasm_bindgen_rayon::init_thread_pool;
 
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
@@ -24,13 +24,17 @@ extern "C" {
 
 }
 
-macro_rules! console_log {
-    // Note that this is using the `log` function imported above during
-    // `bare_bones`
-    ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
+
+#[wasm_bindgen]
+pub fn test_par() -> i32 {
+    let mut x = [1;1000];
+    for _ in 1..10000{
+        x.par_iter_mut().for_each(|x| *x = 2);
+    }
+
+
+    return x.par_iter().sum()
 }
-
-
 
 
 #[wasm_bindgen]
@@ -56,7 +60,7 @@ extern "C" {
 pub struct RustHistoryItem {
     title: String,
     url: String,
-    visit_count: i32
+    visit_count: i32,
 }
 
 
@@ -89,7 +93,6 @@ impl WebAnalyzation {
     pub fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
 
 
-        let now = wasm_timer::Instant::now();
 
         let rust_history_items: Vec<RustHistoryItem> = history
             .into_iter()
@@ -103,7 +106,6 @@ impl WebAnalyzation {
             history_graph
         };
 
-        console_log!("Graph setup took: {}", now.elapsed().as_millis());
 
         r
     }
@@ -114,7 +116,6 @@ impl WebAnalyzation {
         // TODO: Make faster: Calc everything ahead of time, partitions etc. 
 
 
-        let now = wasm_timer::Instant::now();
         // Scores all of the history items, and returns the index as the last tuple item
         let match_scoring: Vec<MatchResult> = self.history_items.iter().map(|h| MatchResult {
             score: filter_scoring::filter_match_score(&filter, &self.history_graph, h),
@@ -122,19 +123,9 @@ impl WebAnalyzation {
         }).collect();
 
 
-        console_log!("Match scoring took {}ms", now.elapsed().as_millis());
 
         let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
 
-        console_log!("Sorting took: {}ms", now.elapsed().as_millis());
-
-        // let r = self.history_items.iter().sorted_by_key(|&x| {
-        //     let r = filter_scoring::filter_match_score(&filter, &self.history_graph, x);
-        //     (-(r.0 as i32), -(r.1 as i32))
-        // }).collect_vec();
-
-        // console_log!("{:?}", r[..15].to_vec());
-        
 
         let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
 
@@ -152,15 +143,14 @@ impl WebAnalyzation {
 
     #[wasm_bindgen]
     pub fn get_edges(&self, title: String, url: String, visit_count: i32) -> Result<JsValue, JsValue>{
-        let now = wasm_timer::Instant::now();
         let q = RustHistoryItem {
             title,
             url,
             visit_count
         };
         let r = serde_wasm_bindgen::to_value(&self.history_graph.get_edges(&q).map(|h| h.to_owned()))?;
-        console_log!("Took: {}", now.elapsed().as_millis());
         Ok(r)
 
     }
 }
+
