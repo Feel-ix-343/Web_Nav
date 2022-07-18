@@ -4,18 +4,15 @@ import * as wasm from 'webnav_analysis'
 
 export type HistoryItem = chrome.history.HistoryItem
 
-// Initialize webworker. This should load before anything else
-const worker = new Worker(new URL('./worker.ts', import.meta.url), {
-  type: "module"
-})
-const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
+
+
 
 
 
 // Start of the application: Create the graph of user history and previos load any searches from chrome memory
 window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("inputBox").focus()
-  workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
+  // TODO: need to initialize first
 	// // TODO: Fix this for when the extension is first launched
   // chrome.storage.sync.get(['filter'], (r) => {
   //   // TODO: FIX
@@ -54,14 +51,18 @@ document.getElementById("inputBox")!.addEventListener("keyup", (ev) => {
 
 async function loadSearch() {
 
-  console.log("Worker loaded")
+  // Initialize webworker. This should load before anything else
+  const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+    type: "module"
+  })
+  const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
+  workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
 
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
 
 
   let response = await workerAPI.search(filter)
-
   console.log(response)
 
   searchOutput.innerHTML = ""
@@ -69,20 +70,10 @@ async function loadSearch() {
     searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
   })
 
+  console.log("SEARCHED")
 
-  // const searchAndLoad = new Promise(async (resolve, reject) => {
-  //   let response = await workerAPI.search(filter)
-  //   searchOutput.innerHTML = ""
-  //   response.forEach(h => {
-  //     searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
-  //   })
-  //   console.log("Search finished for cancelation id " + cancelation.getId())
-  //   resolve("Done")
-  // })
 
-  // Promise.race([cancelationPromise, searchAndLoad]).then(x => {
-  //   console.log("Cancelation " + cancelation.getId() + " is finished with resolution: " + x)
-  // })
+  worker.terminate()
 }
 
 

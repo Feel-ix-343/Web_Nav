@@ -1,10 +1,14 @@
+use std::rc::Rc;
+
 use itertools::Itertools;
 
 
+use js_sys::Promise;
 use rayon::prelude::*;
+use wasm_bindgen_futures::future_to_promise;
 pub use::wasm_bindgen_rayon::init_thread_pool;
 
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
 
 use history_graph::HistoryGraph;
@@ -24,17 +28,6 @@ extern "C" {
 
 }
 
-
-#[wasm_bindgen]
-pub fn test_par() -> i32 {
-    let mut x = [1;1000];
-    for _ in 1..10000{
-        x.par_iter_mut().for_each(|x| *x = 2);
-    }
-
-
-    return x.par_iter().sum()
-}
 
 
 #[wasm_bindgen]
@@ -56,7 +49,7 @@ extern "C" {
 
 
 // TODO: Check if this is faster than using a JsString. It might be
-#[derive(Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Clone)]
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize, Clone)]
 pub struct RustHistoryItem {
     title: String,
     url: String,
@@ -87,12 +80,11 @@ pub struct WebAnalyzation {
     history_graph: HistoryGraph,
 }
 
+
 #[wasm_bindgen]
 impl WebAnalyzation {
     #[wasm_bindgen(constructor)]
     pub fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
-
-
 
         let rust_history_items: Vec<RustHistoryItem> = history
             .into_iter()
@@ -106,30 +98,33 @@ impl WebAnalyzation {
             history_graph
         };
 
-
         r
     }
 
     #[wasm_bindgen]
-    pub fn get_search_results(&self, filter: String) -> Result<JsValue, JsValue> {
+    pub fn get_search_results(&self, filter: String) -> Promise {
 
-        // TODO: Make faster: Calc everything ahead of time, partitions etc. 
+        let history_items = self.history_items.to_owned();
+        let history_graph = self.history_graph.to_owned();
+        
+
+        future_to_promise(async move {
+            // TODO: Make faster: Calc everything ahead of time, partitions etc. 
+            // Scores all of the history items, and returns the index as the last tuple item
+            let match_scoring: Vec<MatchResult> = history_items.iter().map(|h| MatchResult {
+                score: filter_scoring::filter_match_score(&filter, &history_graph, h),
+                history_item: &h
+            }).collect();
 
 
-        // Scores all of the history items, and returns the index as the last tuple item
-        let match_scoring: Vec<MatchResult> = self.history_items.iter().map(|h| MatchResult {
-            score: filter_scoring::filter_match_score(&filter, &self.history_graph, h),
-            history_item: &h
-        }).collect();
+
+            let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
 
 
+            let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
 
-        let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
-
-
-        let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
-
-        Ok(x)
+            Ok(x)
+        })
     }
 
     #[wasm_bindgen]
@@ -154,3 +149,28 @@ impl WebAnalyzation {
     }
 }
 
+#[wasm_bindgen]
+pub fn get_search_results(search_process: &WebAnalyzation, filter: String) -> Promise {
+
+    let history_items = search_process.history_items.to_owned();
+    let history_graph = search_process.history_graph.to_owned();
+    
+
+    future_to_promise(async move {
+        // TODO: Make faster: Calc everything ahead of time, partitions etc. 
+        // Scores all of the history items, and returns the index as the last tuple item
+        let match_scoring: Vec<MatchResult> = history_items.iter().map(|h| MatchResult {
+            score: filter_scoring::filter_match_score(&filter, &history_graph, h),
+            history_item: &h
+        }).collect();
+
+
+
+        let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
+
+
+        let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
+
+        Ok(x)
+    })
+}

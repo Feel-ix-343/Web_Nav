@@ -1,10 +1,13 @@
 
 use rayon::prelude::*;
+use serde::Deserialize;
 use std::collections::BTreeMap;
 use crate::RustHistoryItem;
 
+use wasm_bindgen::prelude::*;
 
-#[derive(Debug)]
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct HistoryGraph {
     pub data: BTreeMap<RustHistoryItem, Vec<RustHistoryItem>>
 }
@@ -194,13 +197,5 @@ pub mod tests {
     }
 
 }
-
-
-
-
-
-
-
-
 
 
