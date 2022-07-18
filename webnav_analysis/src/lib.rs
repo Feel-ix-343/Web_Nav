@@ -83,8 +83,9 @@ pub struct WebAnalyzation {
 
 #[wasm_bindgen]
 impl WebAnalyzation {
-    #[wasm_bindgen(constructor)]
-    pub fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
+    //#[wasm_bindgen(constructor)]
+    #[wasm_bindgen]
+    pub async fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
 
         let rust_history_items: Vec<RustHistoryItem> = history
             .into_iter()

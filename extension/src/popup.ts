@@ -56,7 +56,8 @@ async function loadSearch() {
     type: "module"
   })
   const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
-  workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
+
+  await workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
 
   const filter = getFilterElem().value
   const searchOutput = document.getElementById("searchOutput") as HTMLDivElement

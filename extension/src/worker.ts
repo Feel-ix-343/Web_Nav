@@ -18,10 +18,10 @@ var searchProcess: wasm.WebAnalyzation;
 // Should be of chrome.history.HistoryItem
 
 
-function init(history: HistoryItem[]) {
+async function init(history: HistoryItem[]) {
   // TIme this funtion call
   const start = performance.now()
-  searchProcess = new wasm.WebAnalyzation(history)
+  searchProcess = await wasm.WebAnalyzation.new(history)
   const end = performance.now()
   console.log(`Initialization took ${end - start} milliseconds.`)
 }
