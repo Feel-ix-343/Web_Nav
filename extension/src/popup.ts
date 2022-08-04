@@ -1,11 +1,24 @@
 import * as Comlink from "comlink";
 
-import * as wasm from 'webnav_analysis'
 
 export type HistoryItem = chrome.history.HistoryItem
 
 
 
+
+async function initiateGraph() {
+  // Initialize webworker. This should load before anything else
+  const worker = new Worker(new URL('./worker.ts', import.meta.url), {
+    type: "module"
+  })
+  const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
+
+  await workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
+
+  return workerAPI
+}
+
+const worker = initiateGraph()
 
 
 
@@ -21,6 +34,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   //   loadSearch()
   // })
 
+  document.getElementById("closeCButton")!.addEventListener('click', (ev) => {
+    let childrenDisplay = document.getElementById("childrenDisplay")
+    childrenDisplay.classList.add("hidden")
+  })
 })
 
 
@@ -49,50 +66,89 @@ document.getElementById("inputBox")!.addEventListener("keyup", (ev) => {
 
 
 
-async function loadSearch() {
-
-  // Initialize webworker. This should load before anything else
-  const worker = new Worker(new URL('./worker.ts', import.meta.url), {
-    type: "module"
-  })
-  const workerAPI = Comlink.wrap<import('./worker').Worker>(worker)
-
-  await workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
-
-  const filter = getFilterElem().value
-  const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
-
-
-  let response = await workerAPI.search(filter)
-  console.log(response)
-
-  searchOutput.innerHTML = ""
-  response.forEach(h => {
-    searchOutput.appendChild(outputItem(h.history_item.title!, h.history_item.url!))
-  })
-
-  console.log("SEARCHED")
-
-
-  worker.terminate()
-}
-
-
-
-
 function getFilterElem(): HTMLInputElement {
   return document.getElementById("inputBox") as HTMLInputElement
 }
 
-function outputItem(title: string, url: string): HTMLAnchorElement {
-  const outLink = document.createElement("a") as HTMLAnchorElement
-  outLink.target = "_blank"
+async function loadSearch() {
+  const filter = getFilterElem().value
+  const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
+
+
+  let response = await chrome.history.search({ text: filter, maxResults: 100, startTime: 987532627000 })
+  console.log(response)
+
+  searchOutput.innerHTML = ""
+  response.forEach(h => {
+    searchOutput.appendChild(outputItem(h))
+  })
+
+  console.log("SEARCHED")
+
+}
+
+
+function outputItem(historyItem: HistoryItem): HTMLDivElement {
+  let title = historyItem.title
+  let url = historyItem.url
+
+
+  const outLink = document.createElement("div") as HTMLDivElement
+  // outLink.target = "_blank"
   outLink.className = "outLink"
   outLink.innerText = title
-  outLink.href = url
+  // outLink.href = url
+
+  let actionContainer = document.createElement("div") as HTMLDivElement
+  actionContainer.className = "actionContainer"
+
+  outLink.appendChild(actionContainer)
+
+  let openButton = document.createElement("a") as HTMLAnchorElement
+  openButton.className = "button"
+  openButton.href = url
+  openButton.target = "_blank"
+  openButton.textContent = "Open"
+
+  actionContainer.appendChild(openButton)
+
+
+  worker.then(async (w) => {
+    let edges = await w.getEdges(historyItem)
+
+    if (!edges) return
+
+    let edges_history_item = edges.map(e => {
+      return {title: e.title, url: e.url, visitCount: e.visit_count} as HistoryItem
+    })
+
+    let expandButton = document.createElement('input')
+    expandButton.className = "button"
+    expandButton.type = "button"
+    expandButton.value = "View Children"
+    expandButton.onclick = () => {
+      let childrenDisplay = document.getElementById("childrenDisplay")
+      let children = document.getElementById("children")
+
+      let previousOutput = document.querySelectorAll("#children > .outLink")
+
+      // Remove previous output children
+      previousOutput.forEach((n) => children.removeChild(n))
+
+      edges_history_item.forEach(e => {
+        children.appendChild(outputItem(e))
+      })
+
+      childrenDisplay.classList.remove("hidden")
+
+    }
+
+    actionContainer.appendChild(expandButton)
+  })
 
   return outLink
 }
+
 
 // -------------------
 // Key Command Actions

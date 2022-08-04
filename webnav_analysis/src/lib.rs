@@ -16,8 +16,6 @@ use history_graph::HistoryGraph;
 
 
 mod history_graph;
-mod filter_scoring;
-
 
 
 
@@ -68,15 +66,9 @@ impl RustHistoryItem {
     }
 }
 
-#[derive(Serialize, Debug, Clone, Copy)]
-struct MatchResult<'a> {
-    score: (i32, i32),
-    history_item: &'a RustHistoryItem
-}
 
 #[wasm_bindgen]
 pub struct WebAnalyzation {
-    history_items: Vec<RustHistoryItem>,
     history_graph: HistoryGraph,
 }
 
@@ -94,39 +86,11 @@ impl WebAnalyzation {
 
         let history_graph = HistoryGraph::new(&rust_history_items);
 
-        let r = WebAnalyzation { 
-            history_items: rust_history_items, 
-            history_graph
-        };
+        let r = WebAnalyzation { history_graph };
 
         r
     }
 
-    #[wasm_bindgen]
-    pub fn get_search_results(&self, filter: String) -> Promise {
-
-        let history_items = self.history_items.to_owned();
-        let history_graph = self.history_graph.to_owned();
-        
-
-        future_to_promise(async move {
-            // TODO: Make faster: Calc everything ahead of time, partitions etc. 
-            // Scores all of the history items, and returns the index as the last tuple item
-            let match_scoring: Vec<MatchResult> = history_items.iter().map(|h| MatchResult {
-                score: filter_scoring::filter_match_score(&filter, &history_graph, h),
-                history_item: &h
-            }).collect();
-
-
-
-            let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
-
-
-            let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
-
-            Ok(x)
-        })
-    }
 
     #[wasm_bindgen]
     pub fn get_graph(&self) -> Result<JsValue, JsValue> {
@@ -148,30 +112,4 @@ impl WebAnalyzation {
         Ok(r)
 
     }
-}
-
-#[wasm_bindgen]
-pub fn get_search_results(search_process: &WebAnalyzation, filter: String) -> Promise {
-
-    let history_items = search_process.history_items.to_owned();
-    let history_graph = search_process.history_graph.to_owned();
-    
-
-    future_to_promise(async move {
-        // TODO: Make faster: Calc everything ahead of time, partitions etc. 
-        // Scores all of the history items, and returns the index as the last tuple item
-        let match_scoring: Vec<MatchResult> = history_items.iter().map(|h| MatchResult {
-            score: filter_scoring::filter_match_score(&filter, &history_graph, h),
-            history_item: &h
-        }).collect();
-
-
-
-        let r = match_scoring.iter().sorted_by_key(|m| (-m.score.0, -m.score.1)).collect_vec();
-
-
-        let x = serde_wasm_bindgen::to_value(&r[..15].to_vec())?;
-
-        Ok(x)
-    })
 }

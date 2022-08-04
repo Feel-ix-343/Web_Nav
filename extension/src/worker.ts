@@ -5,9 +5,6 @@ import * as wasm from 'webnav_analysis'
 
 import {HistoryItem} from './popup'
 
-// Set up the wasm with rayon multi threading
-await wasm.default()
-await wasm.initThreadPool(navigator.hardwareConcurrency)
 
 
 
@@ -19,6 +16,10 @@ var searchProcess: wasm.WebAnalyzation;
 
 
 async function init(history: HistoryItem[]) {
+  // Set up the wasm with rayon multi threading
+  await wasm.default()
+  await wasm.initThreadPool(navigator.hardwareConcurrency)
+
   // TIme this funtion call
   const start = performance.now()
   searchProcess = await wasm.WebAnalyzation.new(history)
@@ -28,29 +29,15 @@ async function init(history: HistoryItem[]) {
 
 
 
-async function search(filter: string) {
-  console.log("Searching")
-  // Time this function call
-  const start = performance.now()
-
-  let r = await searchProcess.get_search_results(filter)
-
-  const end = performance.now()
-  console.log(`Search took ${end - start} milliseconds.`)
-
-  return r as any[]
-}
-
 // TODO: Implement a better identifier
-function getEdges(title: string, url: string, visitCount: number, searchProcess: wasm.WebAnalyzation) {
-  return searchProcess.get_edges(title, url, visitCount)
+function getEdges(historyItem: HistoryItem) {
+  return searchProcess.get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[]
 }
 
 
 
 const worker = {
   init,
-  search,
   getEdges,
 };
 
