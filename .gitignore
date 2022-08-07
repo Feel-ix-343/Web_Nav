@@ -1,7 +1,13 @@
 .metals
 .idea
+.idea/*
+
 extension/.idea
+exponteion/.idea/*
+
 Session.vim
+
+web-nav-server
 web-nav-server/*
 
 
