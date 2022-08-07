@@ -1,6 +1,8 @@
 # Web Nav
 *The command pallet for the web*
 
+Look at branch WASM && Google search for latest developments
+
 Analyses chrome history and suggests websites related to a search query to make repetitive web navigation faster and easier. <br>
 
 ## Example Use Case
