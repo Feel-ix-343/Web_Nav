@@ -31,6 +31,34 @@ function eventListener(ev: KeyboardEvent): void {
     } else {
       changeFocus(-1)
     }
+  } else if ((ev.key == " " || ev.key == "Enter") && activeOutlinkIndex != -1) {
+    ev.preventDefault()
+
+    console.log("open")
+
+
+    // TODO: Fix this uglyness
+    let activeElement = document.querySelectorAll("#searchOutput > .outLink")[activeOutlinkIndex] as HTMLDivElement
+    let outLinkOpenButton = (() => {
+      console.log(activeElement.children)
+      for (let childElement of activeElement.children) {
+        if (childElement.className === "actionContainer") {
+          for (let childAction of childElement.children) {
+            if (childAction.className === "button" && childAction.textContent === "Open") {
+              return childAction
+            }
+          }
+        }
+      }
+      return null
+    })()
+
+    console.log(outLinkOpenButton)
+
+    if (outLinkOpenButton) {
+      console.log("click");
+      (outLinkOpenButton as HTMLAnchorElement).click()
+    }
   }
 }
 
