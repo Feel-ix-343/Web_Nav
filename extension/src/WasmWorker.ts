@@ -36,6 +36,7 @@ class WasmSearchProcess {
   }
 
 
+  // TODO: Check for get edges before returning
   async getEdges(historyItem: HistoryItem): Promise<HistoryItem[]> {
     return ((await this.searchProcess).get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[]).map((edge) => {
       return {title: edge.title, url: edge.url, visitCount: edge.visit_count} as HistoryItem

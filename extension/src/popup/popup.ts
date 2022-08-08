@@ -6,10 +6,9 @@ import OutLinkItem from './OutLinkItem'
 
 window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("inputBox").focus()
-  // TODO: need to initialize first
-	// // TODO: Fix this for when the extension is first launched
+
+  // TODO: Add this functionality back
   // chrome.storage.sync.get(['filter'], (r) => {
-  //   // TODO: FIX
   //   document.getElementById("inputBox").textContent = r.filter
 
   //   loadSearch()
