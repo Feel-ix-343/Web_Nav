@@ -36,11 +36,19 @@ export default class ChildrenDisplay {
     return wasmSearchProcess
   }
 
+  async hasChildren(historyItem: HistoryItem) {
+    let edges = await (await this.worker).getEdges(historyItem)
+
+    if (!edges) return false
+    else return true
+
+  }
+
   // Each outLink has a button that will access this function
   async loadChildren(historyItem: HistoryItem) {
     let edges = await (await this.worker).getEdges(historyItem)
 
-    if (!edges) return
+    if (!edges) return 
 
     let childrenDisplay = document.getElementById("childrenDisplay")
     let children = document.getElementById("children")

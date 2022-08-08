@@ -9,6 +9,7 @@ export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: C
   const outLink = document.createElement("div") as HTMLDivElement
   outLink.className = "outLink"
   outLink.innerText = title
+  // Allowing the div to be focusable
   outLink.tabIndex = -1
 
   // The collection of buttons for each outlink item
@@ -24,13 +25,18 @@ export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: C
   openButton.textContent = "Open"
   actionButtonContainer.appendChild(openButton)
 
-  // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
-  let expandButton = document.createElement('input')
-  expandButton.className = "button"
-  expandButton.type = "button"
-  expandButton.value = "View Children"
-  expandButton.onclick = () => childrenDisplay.loadChildren(historyItem)
-  actionButtonContainer.appendChild(expandButton)
+  // While waiting for the graph to initialize, return the button. But, when it is initialized, add [below] to the button
+  childrenDisplay.hasChildren(historyItem).then(response => {
+    if (response) {
+      // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
+      let expandButton = document.createElement('input')
+      expandButton.className = "button"
+      expandButton.type = "button"
+      expandButton.value = "View Children"
+      expandButton.onclick = () => childrenDisplay.loadChildren(historyItem)
+      actionButtonContainer.appendChild(expandButton)
+    }
+  })
 
   return outLink
 }
