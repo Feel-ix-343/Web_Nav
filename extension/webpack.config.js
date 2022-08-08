@@ -3,11 +3,14 @@ const path = require('path');
 
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
+  devtool: 'cheap-module-source-map',
+
   experiments: {
     asyncWebAssembly: true,
     topLevelAwait: true
   },
+
   module: {
     rules: [
       {
@@ -21,9 +24,8 @@ module.exports = {
     extensions: [".ts", ".js", ".wasm"],
   },
   entry: {
-    background: './src/background.ts',
-    popup: './src/popup.ts',
-    worker: './src/worker.ts'
+    popup: './src/popup/popup.ts',
+    worker: './src/WasmWorker.ts'
   },
   plugins: [
     new CopyWebpackPlugin({patterns: [
