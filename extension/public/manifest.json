@@ -17,7 +17,7 @@
     "value": "same-origin"
   },
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self';"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self'; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
   },
   "host_permissions": [
     "http://localhost:9000/*"
