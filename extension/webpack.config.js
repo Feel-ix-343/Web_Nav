@@ -25,7 +25,8 @@ module.exports = {
   },
   entry: {
     popup: './src/popup/popup.ts',
-    worker: './src/WasmWorker.ts'
+    worker: './src/WasmWorker.ts',
+    background: './src/background.ts'
   },
   plugins: [
     new CopyWebpackPlugin({patterns: [
