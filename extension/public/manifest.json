@@ -16,6 +16,9 @@
   "cross_origin_opener_policy": {
     "value": "same-origin"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self';"
+  },
   "host_permissions": [
     "http://localhost:9000/*"
   ],
