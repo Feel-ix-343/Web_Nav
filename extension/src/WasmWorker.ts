@@ -36,7 +36,6 @@ class WasmSearchProcess {
   }
 
 
-  // TODO: Check for get edges before returning
   async getEdges(historyItem: HistoryItem): Promise<HistoryItem[]> {
     return ((await this.searchProcess).get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[])?.map((edge) => {
       return {title: edge.title, url: edge.url, visitCount: edge.visit_count} as HistoryItem
@@ -57,30 +56,3 @@ const worker = {
 export type Worker = typeof worker
 
 Comlink.expose(worker);
-
-
-
-// // Should be of chrome.history.HistoryItem
-// 
-// 
-// 
-// async function init(history: HistoryItem[]) {
-//   // Set up the wasm with rayon multi threading
-//   await wasm.default()
-//   await wasm.initThreadPool(navigator.hardwareConcurrency)
-// 
-//   // TIme this funtion call
-//   const start = performance.now()
-//   searchProcess = await wasm.WebAnalyzation.new(history)
-//   const end = performance.now()
-//   console.log(`Initialization took ${end - start} milliseconds.`)
-// }
-// 
-// 
-// 
-// // TODO: Implement a better identifier
-// function getEdges(historyItem: HistoryItem) {
-//   return searchProcess.get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[]
-// }
-
-

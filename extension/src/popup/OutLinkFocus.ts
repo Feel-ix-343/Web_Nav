@@ -6,8 +6,9 @@ let activeOutlinkIndex: number
 export default function start(): void {
 
   (document.querySelectorAll("#searchOutput > .outLink")[0] as HTMLDivElement).focus()
-  // Starts listening for events. THere should not be any other event happening after start was called, so this should work
-  activeOutlinkIndex = 0 // FIXME: Confusing; THe window listener gets called when declared. Need to make activeOutLink -1 to counter this
+
+  // Starts listening for events
+  activeOutlinkIndex = 0 
   window.addEventListener("keydown", eventListener)
 
   console.log("focusing")
@@ -37,10 +38,9 @@ function eventListener(ev: KeyboardEvent): void {
     console.log("open")
 
 
-    // TODO: Fix this uglyness
+    // Getting the open link button (Sorry idk how to do this)
     let activeElement = document.querySelectorAll("#searchOutput > .outLink")[activeOutlinkIndex] as HTMLDivElement
     let outLinkOpenButton = (() => {
-      console.log(activeElement.children)
       for (let childElement of activeElement.children) {
         if (childElement.className === "actionContainer") {
           for (let childAction of childElement.children) {
@@ -51,14 +51,11 @@ function eventListener(ev: KeyboardEvent): void {
         }
       }
       return null
-    })()
+    })();
 
-    console.log(outLinkOpenButton)
+    // Making a click action on the link
+    (outLinkOpenButton as HTMLAnchorElement)?.click()
 
-    if (outLinkOpenButton) {
-      console.log("click");
-      (outLinkOpenButton as HTMLAnchorElement).click()
-    }
   }
 }
 
