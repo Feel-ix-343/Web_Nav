@@ -7,12 +7,15 @@ import OutLinkItem from './OutLinkItem'
 window.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("inputBox").focus()
 
-  // TODO: Add this functionality back
-  // chrome.storage.sync.get(['filter'], (r) => {
-  //   document.getElementById("inputBox").textContent = r.filter
+  // Syncing the previous search on extension open
+  chrome.storage.sync.get(['filter'], (r) => {
+    console.log(r.filter)
 
-  //   loadSearch()
-  // })
+    let prevFilter = r.filter
+    if (prevFilter) getFilterElem().value = prevFilter;
+
+    loadSearch()
+  })
 
 
   function getFilterElem(): HTMLInputElement {
@@ -36,13 +39,15 @@ window.addEventListener("DOMContentLoaded", async () => {
     })
   })
 
+
+
   const childrenDisplay = new ChildrenDisplay()
+
+
 
   // -----------------------------------
   // Loading the Search in the input box
   // -----------------------------------
-
-
   async function loadSearch() {
     const filter = getFilterElem().value
     const searchOutput = document.getElementById("searchOutput") as HTMLDivElement
