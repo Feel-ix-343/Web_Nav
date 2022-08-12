@@ -14,7 +14,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     let prevFilter = r.filter
     if (prevFilter) getFilterElem().value = prevFilter;
 
-    loadSearch()
+    loadSearch() // TODO: Fix not loading
   })
 
 

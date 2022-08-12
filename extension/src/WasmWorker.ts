@@ -18,17 +18,16 @@ class WasmSearchProcess {
   // I made this into its own function as to make sure that wasm.default, wasm.initThreatPool, and trackWasmInit are executed sequentially
   private async init(history: HistoryItem[]) {
     await wasm.default()
-    await wasm.initThreadPool(navigator.hardwareConcurrency)
 
     this.searchProcess = this.trackWasmInit(history)
   }
 
   // Times the wasm request and return the wasm object
   private async trackWasmInit(history: HistoryItem[]): Promise<wasm.WebAnalyzation> {
-    await wasm.WebAnalyzation.new(history)
+    new wasm.WebAnalyzation(history)
 
     const start = performance.now()
-    let testSearchProcess = await wasm.WebAnalyzation.new(history)
+    let testSearchProcess = new wasm.WebAnalyzation(history);
     const end = performance.now()
     console.log(`Initialization took ${end - start} milliseconds.`)
 

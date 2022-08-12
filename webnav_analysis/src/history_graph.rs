@@ -1,10 +1,6 @@
-
-use rayon::prelude::*;
 use serde::Deserialize;
 use std::collections::BTreeMap;
-use crate::RustHistoryItem;
-
-use wasm_bindgen::prelude::*;
+use crate::web_interface::RustHistoryItem;
 
 
 #[derive(Debug, Deserialize, Clone)]
@@ -15,23 +11,26 @@ pub struct HistoryGraph {
 
 impl HistoryGraph {
     pub fn new(history_arr: &Vec<RustHistoryItem>) -> HistoryGraph { 
+        /// Example: github.com
+        type BaseUrl = String;
 
-        let grouped_by_baseurl: BTreeMap<String, Vec<&RustHistoryItem>> = history_arr
+        let grouped_by_baseurl: BTreeMap<BaseUrl, Vec<&RustHistoryItem>> = history_arr
             .iter()
             .fold(BTreeMap::new(), |mut map, history_item| {
-                let baseurl = &url_path_list(&history_item.url)[0];
-                let basegroup = map.entry(baseurl.to_owned()).or_insert(vec![]);
-                basegroup.push(history_item);
-                map
+                let baseurl = url_path_list(&history_item.url)[0].to_owned();
+                let base_history_items = map.entry(baseurl).or_insert(vec![]);
+                base_history_items.push(history_item);
+                return map
             });
 
-        let grouped_by_baseurl_with_depths: BTreeMap<&String, BTreeMap<u32, Vec<&RustHistoryItem>>> = grouped_by_baseurl
+        // u32 represents the depth of the link
+        let grouped_by_baseurl_with_depths: BTreeMap<&BaseUrl, BTreeMap<u32, Vec<&RustHistoryItem>>> = grouped_by_baseurl
             .iter()
             .map(|(baseurl, history_items)| {
                 (baseurl, history_items
                     .iter()
                     .fold(BTreeMap::new(), |mut map, &history_item| {
-                        let depth = url_path_list(&history_item.url).len() as u32; // TODO: Optimize
+                        let depth = url_path_list(&history_item.url).len() as u32;
                         let depth_group = map.entry(depth).or_insert(vec![]);
                         depth_group.push(history_item);
                         map
@@ -40,7 +39,7 @@ impl HistoryGraph {
             .collect();
 
         // A graph rule is something like Link -> Link, or in this case (Link, Link). I did my modeling in mathematica, and this is how it is
-        let baseurl_graph_rules: BTreeMap<&String, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
+        let baseurl_graph_rules: BTreeMap<&BaseUrl, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
             .iter()
             .map(|(base, history_items)| {
                 let base_with_depths = &grouped_by_baseurl_with_depths[base];
@@ -70,7 +69,7 @@ impl HistoryGraph {
 
 
 
-// TODO: better performance
+/// Splits Urls by the '/' in them.
 fn url_path_list(url: &String) -> Vec<String> {
     let mut url_simplified = url
         .replacen("https://", "", 1)
@@ -84,52 +83,9 @@ fn url_path_list(url: &String) -> Vec<String> {
 }
 
 
-
-
-/// Searches recursively through a map of baseurl depth lists to find the parent hist item (based
-/// on the url) for the given hist item. Returns a tuple (parent item found, inputted_history_item)
-fn find_parent_item<'a>(hist_item: &'a RustHistoryItem, 
-                        baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
-                        depth_option: Option<&u32>) -> (&'a RustHistoryItem, &'a RustHistoryItem) {
-
-    let hist_item_url_list = url_path_list(&hist_item.url); // Doing this Earlier than with `parent` to set depth if none
-
-    let hist_url_list_len = hist_item_url_list.len() as u32;
-    let depth = depth_option.unwrap_or(&hist_url_list_len);
-
-    
-
-    let depths: Vec<&u32> = baseurl_depth_lists.keys().collect();
-
-    let min_depth: &u32 = depths.iter().min().unwrap();
-    if depth <= min_depth {
-        (baseurl_depth_lists[min_depth][0], hist_item)
-
-    } else {
-            // TODO: && is just wierd, I think?
-        if depths.contains(&&(depth - 1)) { // The possible parent depth (depth - 1) needs to exist
-                                            
-            // Checking if the parent depth contains a parent hist item match
-            for possible_par_hist_item in baseurl_depth_lists[&(depth-1)].as_slice() {
-                let parent_url_list = url_path_list(&possible_par_hist_item.url);
-
-                let hist_item_url_list_drop_last = &hist_item_url_list[..(*depth as usize)-1];
-                println!("{:?}", parent_url_list);
-                println!("{:?}", hist_item_url_list_drop_last);
-
-                if hist_item_url_list_drop_last == parent_url_list {
-                    return (possible_par_hist_item, hist_item)
-                }
-            }
-        }
-        return find_parent_item(&hist_item, &baseurl_depth_lists, Some(&(depth-1)))
-    }
-}
-
-fn base_with_links<'a>(
-    baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
-    base_hist_items: &'a Vec<&RustHistoryItem>
-    ) -> Vec<(&'a RustHistoryItem, &'a RustHistoryItem)> {
+fn base_with_links<'a>( baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
+                        base_hist_items: &'a Vec<&RustHistoryItem>
+                        ) -> Vec<(&'a RustHistoryItem, &'a RustHistoryItem)> {
     base_hist_items
         .iter()
         .fold(Vec::new(), |mut graph, &history_item| { 
@@ -137,6 +93,46 @@ fn base_with_links<'a>(
             graph
          })
 }
+
+
+/// Searches recursively through a map of baseurl depth lists to find the parent hist item (based
+/// on the url) for the given hist item. Returns a tuple (parent item found, inputted_history_item)
+fn find_parent_item<'a>(hist_item: &'a RustHistoryItem, 
+                        baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
+                        depth_option: Option<u32>) -> (&'a RustHistoryItem, &'a RustHistoryItem) {
+
+    let hist_item_url_list = url_path_list(&hist_item.url); 
+    let hist_url_list_len = hist_item_url_list.len() as u32;
+
+    let depth = depth_option.unwrap_or(hist_url_list_len); // Either the depth is specified (recursive) or it is None (Called by base with links)
+    
+
+    let depths: Vec<u32> = baseurl_depth_lists.keys().map(|d| *d).collect();
+    let min_depth: u32 = *(depths.iter().min().unwrap());
+
+
+    if depth <= min_depth {
+        return (baseurl_depth_lists[&min_depth][0], hist_item)
+    } else {
+        if depths.contains(&(depth - 1)) { // The possible parent depth (depth - 1) needs to exist in the base
+                                            
+            // Checking if the parent depth contains a parent hist item match
+            for possible_par_hist_item in baseurl_depth_lists[&(depth-1)].as_slice() {
+                let parent_url_list = url_path_list(&possible_par_hist_item.url);
+
+                let hist_item_url_list_drop_last = &hist_item_url_list[..(depth as usize)-1];
+                println!("{:?}", parent_url_list);
+                println!("{:?}", hist_item_url_list_drop_last);
+
+                if hist_item_url_list_drop_last == parent_url_list { // A match has been found
+                    return (possible_par_hist_item, hist_item)
+                }
+            }
+        }
+        return find_parent_item(&hist_item, &baseurl_depth_lists, Some(depth-1))
+    }
+}
+
 
 
 
