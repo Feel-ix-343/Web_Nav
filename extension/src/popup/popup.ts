@@ -1,6 +1,7 @@
 import ChildrenDisplay from './ChildrenDisplay'
 import OutLinkFocus from './OutLinkFocus'
 import OutLinkItem from './OutLinkItem'
+import PopupWasmObserver from './PopupWasmObserver'
 
 
 
@@ -14,7 +15,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     let prevFilter = r.filter
     if (prevFilter) getFilterElem().value = prevFilter;
 
-    loadSearch() // TODO: Fix not loading
+    loadSearch()
   })
 
 
@@ -42,7 +43,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
   const childrenDisplay = new ChildrenDisplay()
-
+  const wasmObserver = new PopupWasmObserver()
 
 
   // -----------------------------------
@@ -54,14 +55,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
     let response = await chrome.history.search({ text: filter, maxResults: 100, startTime: 987532627000 })
-    console.log(response)
 
     searchOutput.innerHTML = ""
     response.forEach(historyItem => {
-      searchOutput.appendChild(OutLinkItem(historyItem, childrenDisplay))
+      searchOutput.appendChild(OutLinkItem(historyItem, childrenDisplay, wasmObserver))
     })
 
-    console.log("SEARCHED")
   }
 
 })

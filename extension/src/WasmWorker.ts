@@ -43,7 +43,7 @@ class WasmSearchProcess {
 }
 
 // Used by some webworker type references
-export type WasmSearchProcessType = WasmSearchProcess
+export type WasmSearchProcessType = Comlink.Remote<WasmSearchProcess>
 
 
 const worker = {

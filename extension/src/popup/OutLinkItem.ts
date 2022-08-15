@@ -1,6 +1,7 @@
 import ChildrenDisplay from './ChildrenDisplay'
+import PopupWasmObserver from './PopupWasmObserver'
 
-export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: ChildrenDisplay): HTMLDivElement {
+export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: ChildrenDisplay, wasmObserver: PopupWasmObserver): HTMLDivElement {
   let title = historyItem.title
   let url = historyItem.url
 
@@ -26,16 +27,19 @@ export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: C
   actionButtonContainer.appendChild(openButton)
 
   // While waiting for the graph to initialize, return the button. But, when it is initialized, add [below] to the button
-  childrenDisplay.hasChildren(historyItem).then(response => {
-    if (response) {
-      // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
-      let expandButton = document.createElement('input')
-      expandButton.className = "button"
-      expandButton.type = "button"
-      expandButton.value = "View Children"
-      expandButton.onclick = () => childrenDisplay.loadChildren(historyItem)
-      actionButtonContainer.appendChild(expandButton)
-    }
+  wasmObserver.initializationSubscription(async (worker) => {
+    let edges = await worker.getEdges(historyItem)
+
+    if (!edges) return;
+
+    // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
+    let expandButton = document.createElement('input')
+    expandButton.className = "button"
+    expandButton.type = "button"
+    // TODO: Change naming
+    expandButton.value = "View Children"
+    expandButton.onclick = () => childrenDisplay.loadChildren(historyItem, edges, wasmObserver)
+    actionButtonContainer.appendChild(expandButton)
   })
 
   return outLink
