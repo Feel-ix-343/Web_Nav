@@ -2,6 +2,11 @@ import * as Comlink from 'comlink'
 
 
 export default class PopupWasmObserver {
+  private wasmWorker = new Worker(new URL('../WasmWorker.ts', import.meta.url), {
+    type: "module"
+  })
+  private workerAPI = Comlink.wrap<import('../WasmWorker').Worker>(this.wasmWorker)
+  
   private worker = this.initializeGraph()
 
   constructor () {
@@ -11,19 +16,15 @@ export default class PopupWasmObserver {
   // Setting up the graph at window open
   private async initializeGraph()  {
     // Initialize webworker. This should load before anything else
-    const wasmWorker = new Worker(new URL('../WasmWorker.ts', import.meta.url), {
-      type: "module"
-    })
-    const workerAPI = Comlink.wrap<import('../WasmWorker').Worker>(wasmWorker)
 
-    await workerAPI.initialize(
+    await this.workerAPI.initialize(
       await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 })
     )
 
-    return workerAPI
+    return this.workerAPI
   }
 
-  public async initializationSubscription(onInitialization: (worker) => void) {
+  public async initializationSubscription(onInitialization: (worker: typeof this.workerAPI) => void) {
     let worker = await this.worker
     onInitialization(worker)
   }
