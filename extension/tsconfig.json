@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop":true,
     "removeComments": true,
     "module": "es2022",
     "moduleResolution": "node",
     "target": "es2022",
+    "jsx": "react-jsx"
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules"]
 }
+

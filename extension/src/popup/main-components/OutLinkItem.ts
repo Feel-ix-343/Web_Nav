@@ -1,5 +1,5 @@
 import ChildrenDisplay from './ChildrenDisplay'
-import PopupWasmObserver from './PopupWasmObserver'
+import PopupWasmObserver from '.././PopupWasmObserver'
 
 export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: ChildrenDisplay, wasmObserver: PopupWasmObserver): HTMLDivElement {
   let title = historyItem.title

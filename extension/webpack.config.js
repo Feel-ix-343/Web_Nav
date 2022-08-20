@@ -1,10 +1,12 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin")
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 
 
 module.exports = {
   mode: 'development',
   devtool: 'cheap-module-source-map',
+
 
   experiments: {
     asyncWebAssembly: true,
@@ -18,13 +20,26 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.(ts|js)x$/,
+        use: "babel-loader",
+        exclude: /node_modules/
+      },
+      {
+        test: /.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }
     ],
   },
+
   resolve: {
-    extensions: [".ts", ".js", ".wasm"],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".wasm"],
   },
   entry: {
-    popup: './src/popup/popup.ts',
+    popup: './src/popup/popup.tsx',
     worker: './src/WasmWorker.ts',
     background: './src/background.ts'
   },
@@ -37,6 +52,7 @@ module.exports = {
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].js',
   }
+
 };

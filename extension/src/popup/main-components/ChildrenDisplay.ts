@@ -1,6 +1,6 @@
 import OutLinkItem from './OutLinkItem'
 
-import PopupWasmObserver from "./PopupWasmObserver";
+import PopupWasmObserver from ".././PopupWasmObserver";
 
 export default class ChildrenDisplay {
 
