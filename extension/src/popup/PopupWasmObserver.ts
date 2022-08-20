@@ -7,7 +7,7 @@ export default class PopupWasmObserver {
   })
   private workerAPI = Comlink.wrap<import('../WasmWorker').Worker>(this.wasmWorker)
   
-  private worker = this.initializeGraph()
+  private worker: Promise<typeof this.workerAPI>
 
   constructor () {
     this.worker = this.initializeGraph()

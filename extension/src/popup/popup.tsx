@@ -82,7 +82,7 @@ interface AppState {
   sublinkViewHidden: boolean
 }
 class App extends React.Component<AppProps, AppState> {
-  wasmObserver = new PopupWasmObserver()
+  wasmObserver: PopupWasmObserver
   
 
   constructor(props: AppProps) {
@@ -93,6 +93,8 @@ class App extends React.Component<AppProps, AppState> {
       activeSublinks: null,
       sublinkViewHidden: true
     }
+
+    this.wasmObserver = new PopupWasmObserver()
   }
 
   loadSearch = async (filter: string) => {
