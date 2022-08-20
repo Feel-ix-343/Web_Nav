@@ -35,7 +35,6 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
 
   sublinksButton = () => {
     if (this.state.historyItemSublinks) {
-      console.log(this.state.historyItemSublinks)
       return (
         <input 
           className="button"

@@ -13,7 +13,6 @@ interface SublinkViewProps {
 
 export default class SublinkView extends React.Component<SublinkViewProps> {
   render() {
-    console.log(this.props.hidden)
     return (
       <div id='childrenDisplay' className={this.props.hidden ? "hidden" : ""}> 
         <input
