@@ -1,9 +1,8 @@
 import * as Comlink from 'comlink'
 
-import {WasmSearchProcessType} from '../WasmWorker'
 
 export default class PopupWasmObserver {
-  private worker: Promise<WasmSearchProcessType>
+  private worker = this.initializeGraph()
 
   constructor () {
     this.worker = this.initializeGraph()
@@ -17,16 +16,14 @@ export default class PopupWasmObserver {
     })
     const workerAPI = Comlink.wrap<import('../WasmWorker').Worker>(wasmWorker)
 
-    const wasmSearchProcess = new workerAPI.WasmSearchProcess(
+    await workerAPI.initialize(
       await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 })
     )
 
-    // await workerAPI.init(await chrome.history.search({ text: "", maxResults: 100000, startTime: 987532627000 }))
-
-    return wasmSearchProcess
+    return workerAPI
   }
 
-  public async initializationSubscription(onInitialization: (worker: WasmSearchProcessType) => void) {
+  public async initializationSubscription(onInitialization: (worker) => void) {
     let worker = await this.worker
     onInitialization(worker)
   }

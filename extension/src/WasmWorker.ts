@@ -4,52 +4,41 @@ import * as Comlink from 'comlink'
 import * as wasm from 'webnav_analysis'
 
 
-class WasmSearchProcess {
 
-  // Initializing the search process; Only need to do this on the window open: it is only called on the window open
-  // type is a promise because I do not want anything using this to use it before the this.init() function has been called (and executed sequentially)
-  private searchProcess: Promise<wasm.WebAnalyzation>;
+let searchProcess: wasm.WebAnalyzation
 
-  // Singleton class to represent the wasm search process. Search process has mutable, so I wanted make wrap it. 
-  constructor(history: HistoryItem[]) {
-    this.init(history)
-  }
+// I made this into its own function as to make sure that wasm.default, and trackWasmInit are executed sequentially
+async function initialize(history: HistoryItem[]) {
+  await wasm.default()
 
-  // I made this into its own function as to make sure that wasm.default, wasm.initThreatPool, and trackWasmInit are executed sequentially
-  private async init(history: HistoryItem[]) {
-    await wasm.default()
-
-    this.searchProcess = this.trackWasmInit(history)
-  }
-
-  // Times the wasm request and return the wasm object
-  private async trackWasmInit(history: HistoryItem[]): Promise<wasm.WebAnalyzation> {
-    new wasm.WebAnalyzation(history)
-
-    const start = performance.now()
-    let testSearchProcess = new wasm.WebAnalyzation(history);
-    const end = performance.now()
-    console.log(`Initialization took ${end - start} milliseconds.`)
-
-    return testSearchProcess
-  }
-
-
-  async getEdges(historyItem: HistoryItem): Promise<HistoryItem[]> {
-    return ((await this.searchProcess).get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[])?.map((edge) => {
-      return {title: edge.title, url: edge.url, visitCount: edge.visit_count} as HistoryItem
-    })
-  }
+  searchProcess = await trackWasmInit(history)
 }
 
-// Used by some webworker type references
-export type WasmSearchProcessType = Comlink.Remote<WasmSearchProcess>
+// Time the wasm request and return the wasm object
+async function trackWasmInit(history: HistoryItem[]): Promise<wasm.WebAnalyzation> {
+  const start = performance.now()
+  let testSearchProcess = new wasm.WebAnalyzation(history);
+  const end = performance.now()
+  console.log(`Initialization took ${end - start} milliseconds.`)
+
+  return testSearchProcess
+}
+
+
+async function getEdges(historyItem: HistoryItem): Promise<HistoryItem[]> {
+  let edges = searchProcess.get_edges(historyItem.title, historyItem.url, historyItem.visitCount) as any[]
+
+  let edgesHistoryItems = edges?.map(edge => {
+    return {title: edge.title, url: edge.url, visitCount: edge.visit_count} as HistoryItem
+  })
+
+  return edgesHistoryItems
+}
 
 
 const worker = {
-  // init,
-  // getEdges,
-  WasmSearchProcess
+  initialize,
+  getEdges,
 };
 
 export type Worker = typeof worker

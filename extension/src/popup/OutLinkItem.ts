@@ -27,19 +27,23 @@ export default function outLinkItem(historyItem: HistoryItem, childrenDisplay: C
   actionButtonContainer.appendChild(openButton)
 
   // While waiting for the graph to initialize, return the button. But, when it is initialized, add [below] to the button
-  wasmObserver.initializationSubscription(async (worker) => {
-    let edges = await worker.getEdges(historyItem)
+  wasmObserver.initializationSubscription((worker) => {
+    console.log(worker)
+    worker.getEdges(historyItem).then (edges => {
 
-    if (!edges) return;
+      if (!edges) return;
 
-    // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
-    let expandButton = document.createElement('input')
-    expandButton.className = "button"
-    expandButton.type = "button"
-    // TODO: Change naming
-    expandButton.value = "View Children"
-    expandButton.onclick = () => childrenDisplay.loadChildren(historyItem, edges, wasmObserver)
-    actionButtonContainer.appendChild(expandButton)
+      // The button to view the outLinks children in a new pane below (Children Display uses Rust Wasm)
+      let expandButton = document.createElement('input')
+      expandButton.className = "button"
+      expandButton.type = "button"
+      // TODO: Change naming
+      expandButton.value = "View Children"
+      expandButton.onclick = () => childrenDisplay.loadChildren(historyItem, edges, wasmObserver)
+      actionButtonContainer.appendChild(expandButton)
+
+    })
+
   })
 
   return outLink

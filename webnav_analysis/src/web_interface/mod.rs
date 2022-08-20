@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
+use wasm_bindgen_test::console_log;
 
 use crate::history_graph::HistoryGraph;
 
@@ -37,7 +38,7 @@ pub struct WebAnalyzation {
 #[wasm_bindgen]
 impl WebAnalyzation {
     #[wasm_bindgen(constructor)]
-    pub async fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
+    pub fn new (history: Vec<HistoryItem>) -> WebAnalyzation {
 
         let rust_history_items: Vec<RustHistoryItem> = history
             .into_iter()
@@ -51,6 +52,7 @@ impl WebAnalyzation {
         r
     }
 
+    // TODO: Try to turn this into typescript types
     #[wasm_bindgen]
     pub fn get_edges(&self, title: String, url: String, visit_count: i32) -> Result<JsValue, JsValue>{
         let q = RustHistoryItem {

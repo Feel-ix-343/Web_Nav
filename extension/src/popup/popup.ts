@@ -10,8 +10,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   // Syncing the previous search on extension open
   chrome.storage.sync.get(['filter'], (r) => {
-    console.log(r.filter)
-
     let prevFilter = r.filter
     if (prevFilter) getFilterElem().value = prevFilter;
 

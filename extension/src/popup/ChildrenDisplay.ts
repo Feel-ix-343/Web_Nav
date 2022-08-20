@@ -1,7 +1,5 @@
-import * as Comlink from "comlink";
 import OutLinkItem from './OutLinkItem'
 
-import {WasmSearchProcessType, Worker} from '../WasmWorker'
 import PopupWasmObserver from "./PopupWasmObserver";
 
 export default class ChildrenDisplay {
