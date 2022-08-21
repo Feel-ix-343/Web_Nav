@@ -16,11 +16,11 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
   constructor(props: OutlinkProps) {
     super(props)
 
+    console.log("Constructing", this.props.historyItem.title)
+
     this.state = {
       historyItemSublinks: null
     }
-
-    this.loadHistoryItemChildren()
 
   }
 
@@ -28,34 +28,30 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
     this.props.wasmObserver.initializationSubscription((worker) => {
       worker.getEdges(this.props.historyItem).then(edges => {
         if (edges == undefined) return
-        this.setState({historyItemSublinks: {sublinks: edges}})
+        this.setState({historyItemSublinks: {historyItem: this.props.historyItem, sublinks: edges}})
       })
     })
   }
 
-  sublinksButton = () => {
-    if (this.state.historyItemSublinks) {
-      return (
+  render () {
+    this.loadHistoryItemChildren()
+
+
+    const viewSublinksButton = this.state.historyItemSublinks ?
+      (
         <input 
           className="button"
           type="button"
           onClick={() => this.props.sublinkViewer(this.state.historyItemSublinks)}
           value="View Sublinks" />
-      )
-    } else {
-      return null
-    }
-
-  }
-
-  render () {
+      ) : null
 
     return (
       <div className='outLink' tabIndex={-1}>
         {this.props.historyItem.title}
         <div className='actionContainer'>
           <a className='button' href={this.props.historyItem.url} target="_blank">Open</a>
-          {this.sublinksButton()}
+          {viewSublinksButton}
         </div>
       </div>
     )
