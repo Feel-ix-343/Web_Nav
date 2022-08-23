@@ -31,8 +31,11 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
     })
   }
 
-  render () {
+  componentDidMount(): void {
     this.loadHistoryItemChildren()
+  }
+
+  render () {
 
     const viewSublinksButton = this.state.historyItemSublinks ?
       (
