@@ -6,6 +6,7 @@ import SublinkView from './main-components/SublinkView'
 import PopupWasmObserver from './PopupWasmObserver'
 
 export interface HistoryItemSublinkView {
+  historyItem: HistoryItem
   sublinks: HistoryItem[]
 }
 export type HistoryItemSublinkViewer = (sublink: HistoryItemSublinkView) => void
@@ -14,6 +15,8 @@ interface AppProps {}
 interface AppState {
   displayItems: HistoryItem[],
   activeSublinks: HistoryItemSublinkView,
+  sublinksHistory: HistoryItemSublinkView[],
+  activeSublinkHistoryIndex: number,
   sublinkViewHidden: boolean
 }
 class App extends React.Component<AppProps, AppState> {
@@ -26,9 +29,11 @@ class App extends React.Component<AppProps, AppState> {
       // Will be defined at application start by the subscription in the header
       displayItems: [],
       activeSublinks: null,
+      sublinksHistory: [],
+      activeSublinkHistoryIndex: 0,
       sublinkViewHidden: true
     }
-
+    this.loadSearch("") // Will load the search on a blank startup // TODO: Fix this
     this.wasmObserver = new PopupWasmObserver()
   }
 
@@ -39,11 +44,48 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   sublinkViewer: HistoryItemSublinkViewer = (sublinks: HistoryItemSublinkView) => {
-    this.setState({activeSublinks: sublinks, sublinkViewHidden: false})
+    console.log(sublinks)
+
+    let sublinksHistory = this.state.sublinksHistory?.slice()
+    let activeIndex = sublinksHistory?.push(sublinks) - 1
+
+    this.setState({
+      activeSublinks: sublinks,
+      sublinkViewHidden: false,
+      sublinksHistory: sublinksHistory,
+      activeSublinkHistoryIndex: activeIndex
+    })
   }
+
+  closeSublinkView = () => {
+    this.setState({sublinksHistory: [], activeSublinkHistoryIndex: 0, sublinkViewHidden: true})
+  }
+
+  back = () => {
+    if (this.state.activeSublinkHistoryIndex == 0) return
+
+    let newIndex: number = this.state.activeSublinkHistoryIndex - 1
+    let newActiveSublinks: HistoryItemSublinkView = this.state.sublinksHistory[newIndex]
+
+    this.setState({activeSublinkHistoryIndex: newIndex, activeSublinks: newActiveSublinks})
+
+  }
+
+  forward = () => {
+    if (this.state.activeSublinkHistoryIndex >= this.state.sublinksHistory.length - 1) return
+
+    let newIndex: number = this.state.activeSublinkHistoryIndex + 1
+    let newActiveSublinks: HistoryItemSublinkView = this.state.sublinksHistory[newIndex]
+
+    this.setState({activeSublinkHistoryIndex: newIndex, activeSublinks: newActiveSublinks})
+  }
+  
 
 
   // TODO: Add a back/undo button
+  // TODO: Add a settings and info section (with graph view)
+  // TODO: Add the outlink focus
+  // TODO: Fix not showing all sublinks/wrong sublinks; I think it has to do with ids
   render() {
     return(
       <div>
@@ -52,10 +94,12 @@ class App extends React.Component<AppProps, AppState> {
 
         <SublinkView 
           hidden={this.state.sublinkViewHidden} 
-          onclose={() => this.setState({sublinkViewHidden: true})} 
+          onclose={this.closeSublinkView} 
           subLinksView={this.state.activeSublinks}
           wasmObserver={this.wasmObserver}
           sublinksViewer={this.sublinkViewer}
+          back={this.state.activeSublinkHistoryIndex > 0 ? this.back : null}
+          forward={this.state.activeSublinkHistoryIndex < this.state.sublinksHistory?.length - 1 ? this.forward : null}
         />
 
       </div>

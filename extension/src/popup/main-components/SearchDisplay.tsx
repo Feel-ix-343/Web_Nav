@@ -19,7 +19,7 @@ export default class SearchDisplay extends React.Component<SearchDisplayProps, S
 
   render() {
     
-    let outLinkItems = this.props.displayItems.map(historyItem => <OutlinkItem historyItem={historyItem} wasmObserver={this.props.wasmObserver} sublinkViewer={this.props.sublinkViewer}/>)
+    let outLinkItems = this.props.displayItems.map(historyItem => <OutlinkItem key={historyItem.id} historyItem={historyItem} wasmObserver={this.props.wasmObserver} sublinkViewer={this.props.sublinkViewer}/>)
     
     return(
       <div id='data'>

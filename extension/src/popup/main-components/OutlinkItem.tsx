@@ -16,8 +16,6 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
   constructor(props: OutlinkProps) {
     super(props)
 
-    console.log("Constructing", this.props.historyItem.title)
-
     this.state = {
       historyItemSublinks: null
     }
@@ -35,7 +33,6 @@ export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkSt
 
   render () {
     this.loadHistoryItemChildren()
-
 
     const viewSublinksButton = this.state.historyItemSublinks ?
       (
