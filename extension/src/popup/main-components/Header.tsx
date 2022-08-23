@@ -1,7 +1,6 @@
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-// TODO: maybe add a search loading animation
 interface HeaderState {
   value: string
 }
@@ -11,7 +10,7 @@ interface HeaderProps {
 }
 
 
-export default class Header extends React.Component<HeaderProps, HeaderState> {
+class Header extends React.Component<HeaderProps, HeaderState> {
   constructor(props: HeaderProps) {
     super(props)
 
@@ -58,4 +57,51 @@ export default class Header extends React.Component<HeaderProps, HeaderState> {
 }
 
 
+
+const Header1 = (props: HeaderProps) =>  {
+
+  const [value, setValue] = useState("")
+
+  // Only want to run at initial render
+  useEffect(() => {
+    importPreviousSearch()
+  }, [])
+
+  const importPreviousSearch = () => {
+    console.log("Importing")
+    chrome.storage.sync.get(['filter'], (r) => {
+      let prevSearch = r.filter
+      if (prevSearch != undefined) {
+        setValue(prevSearch)
+
+        // Will update the display with the fetched value at the start of the App
+        props.searchSubscription(prevSearch)
+      } 
+    })
+  }
+
+  const updateGoogleStorage = (newSearch: string) => {
+    chrome.storage.sync.set({"filter": newSearch})
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let search = event.target.value
+
+    setValue(search)
+
+    updateGoogleStorage(search)
+    props.searchSubscription(search)
+  }
+
+
+
+  return(
+    <div id='header'>
+      <h1 id='heading'>Web-Nav</h1>
+      <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
+    </div>
+  )
+}
+
+export default Header1
 
