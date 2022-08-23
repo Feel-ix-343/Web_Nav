@@ -162,8 +162,7 @@ body {
   text-align: center;
   height: 30px;
 
-  font-family: 'Mullish';
-
+  font-family: 'Mullish', sans-serif;
 
   padding: 6px;
 
@@ -178,11 +177,11 @@ a.button {
 }
 
 .button:active {
-    transform: scale(.8) !important;
+    transform: scale(.92) !important;
 }
 
 .button:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 
   cursor: pointer;
 }
