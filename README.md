@@ -20,9 +20,6 @@ To install and use:
 3. Navigate to the *extension* directory, and run `npm install` to install dependencies. Then run `npm run build` to produce the extension files in the *extension/dist* directory
 4. Open chrome://extensions and turn on developer mode
 5. "Load Unpack" the *./extension/dist/* directory and open the extension
-To load updates, use `git pull`, and the extension will update automatically in google chrome
 
-## Usage
-For school, we use canvas lms to keep track of assignments and grades. However, because canvas is password protected, I am not able to get to a classes page simply by using the google search bar. One solution to this is to use bookmarks, however, with the many different classes and link they have, this feels cluttered. I want to be able to look up, for example, "US History Grades", and be displayed a link to the canvas page. That is where this extension comes in to play. 
 
 // TODO: Include graph pictures
