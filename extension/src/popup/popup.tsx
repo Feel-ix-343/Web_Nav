@@ -22,6 +22,7 @@ interface AppState {
 class App extends React.Component<AppProps, AppState> {
   wasmObserver: PopupWasmObserver
 
+  // TODO: Fix the ''{back, back, forward ...} -> view' bug
   sublinksHistoryControl: {history: HistoryItemSublinkView[], activeIndex: number}
   
 
@@ -33,6 +34,7 @@ class App extends React.Component<AppProps, AppState> {
       activeSublinks: null,
       sublinkViewHidden: true
     }
+
 
     // Default values
     this.sublinksHistoryControl = {
