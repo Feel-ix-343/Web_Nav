@@ -13,47 +13,56 @@ interface SublinkViewProps {
   sublinksViewer: HistoryItemSublinkViewer
 }
 
-export default class SublinkView extends React.Component<SublinkViewProps> {
-  render() { 
-    return (
-      <div id='childrenDisplay' className={this.props.hidden ? "hidden" : ""}> 
+const SublinkView = (props: SublinkViewProps) => {
+
+  return (
+    <div id='childrenDisplay' className={props.hidden ? "hidden" : ""}>
+
+      <div id='activeHistoryItemStatus'>
+        <div>{props.subLinksView?.historyItem.title}</div>
+      </div>
+
+      <div id='childrenDisplaySub' > 
         <div className='sublinkNavContainer'>
           <input
             id="closeSublinkView" 
             type="button" 
             className='button' 
-            onClick={this.props.onclose} 
+            onClick={props.onclose} 
             value="close" />
 
 
-          {this.props.back ? 
+          {props.back ? 
             <input
               type='button' 
               className='button sublinkNav' 
-              onClick={this.props.back}
+              onClick={props.back}
               value='back'/> 
 
             : null }
 
-          {this.props.forward ? 
+          {props.forward ? 
             <input 
               type='button'
               className='button sublinkNav'
-              onClick={this.props.forward}
+              onClick={props.forward}
               value='forward'/>
 
             : null }
         </div>
 
+
         <div id="children">
-          {this.props.subLinksView?.sublinks.map(h => <OutLinkItem key={Math.random()}historyItem={h} wasmObserver={this.props.wasmObserver} sublinkViewer={this.props.sublinksViewer} />)}
+          {props.subLinksView?.sublinks.map(h => 
+            <OutLinkItem key={Math.random()} historyItem={h} wasmObserver={props.wasmObserver} sublinkViewer={props.sublinksViewer}
+          />)}
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 
-
+export default SublinkView
 
 
