@@ -54,7 +54,7 @@ const SublinkView = (props: SublinkViewProps) => {
 
         <div id="children">
           {props.subLinksView?.sublinks.map(h => 
-            <OutLinkItem key={Math.random()} historyItem={h} wasmObserver={props.wasmObserver} sublinkViewer={props.sublinksViewer}
+            <OutLinkItem key={h.url} historyItem={h} wasmObserver={props.wasmObserver} sublinkViewer={props.sublinksViewer}
           />)}
         </div>
       </div>
