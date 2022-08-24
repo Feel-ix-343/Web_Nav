@@ -10,55 +10,7 @@ interface HeaderProps {
 }
 
 
-class Header extends React.Component<HeaderProps, HeaderState> {
-  constructor(props: HeaderProps) {
-    super(props)
-
-    this.state = {
-      value: ""
-    }
-
-    this.importPreviousSearch()
-  }
-
-  importPreviousSearch = () => {
-    chrome.storage.sync.get(['filter'], (r) => {
-      let prevSearch = r.filter
-      if (prevSearch) {
-        this.setState({value: prevSearch})
-
-        // Will need to update the display at the start of the App
-        this.props.searchSubscription(prevSearch)
-      } 
-    })
-  }
-
-  updateGoogleStorage = (newSearch: string) => {
-    chrome.storage.sync.set({"filter": newSearch})
-  }
-
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let search = event.target.value
-
-    this.setState({value: search})
-
-    this.updateGoogleStorage(search)
-    this.props.searchSubscription(search)
-  }
-
-  render() {
-    return(
-      <div id='header'>
-        <h1 id='heading'>Web-Nav</h1>
-        <input autoFocus id='inputBox'type='text' value={this.state.value} onChange={this.handleChange} placeholder='Search' />
-      </div>
-    )
-  }
-}
-
-
-
-const Header1 = (props: HeaderProps) =>  {
+const Header = (props: HeaderProps) =>  {
 
   const [value, setValue] = useState("")
 
@@ -68,7 +20,6 @@ const Header1 = (props: HeaderProps) =>  {
   }, [])
 
   const importPreviousSearch = () => {
-    console.log("Importing")
     chrome.storage.sync.get(['filter'], (r) => {
       let prevSearch = r.filter
       if (prevSearch != undefined) {
@@ -103,5 +54,5 @@ const Header1 = (props: HeaderProps) =>  {
   )
 }
 
-export default Header1
+export default Header
 
