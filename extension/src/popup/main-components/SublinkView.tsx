@@ -1,7 +1,6 @@
 import React from 'react'
-import { HistoryItemSublinkView, HistoryItemSublinkViewer } from '../popup'
-import PopupWasmObserver from '../PopupWasmObserver'
-import OutLinkItem from './OutlinkItem'
+import { HistoryItemSublinkView } from '../popup'
+import OutLinkItem, { OutlinkSublinkNeeds } from './OutlinkItem'
 
 interface SublinkViewProps {
   subLinksView: HistoryItemSublinkView,
@@ -9,8 +8,8 @@ interface SublinkViewProps {
   onclose: () => void,
   back: (() => void) | null,
   forward: (() => void) | null,
-  wasmObserver: PopupWasmObserver,
-  sublinksViewer: HistoryItemSublinkViewer
+
+  outlinkSublinkNeeds: OutlinkSublinkNeeds
 }
 
 const SublinkView = (props: SublinkViewProps) => {
@@ -54,7 +53,9 @@ const SublinkView = (props: SublinkViewProps) => {
 
         <div id="children">
           {props.subLinksView?.sublinks.map(h => 
-            <OutLinkItem key={h.url} historyItem={h} wasmObserver={props.wasmObserver} sublinkViewer={props.sublinksViewer}
+            <OutLinkItem key={h.url}
+              historyItem={h} 
+              sublinkNeeds={props.outlinkSublinkNeeds} 
           />)}
         </div>
       </div>

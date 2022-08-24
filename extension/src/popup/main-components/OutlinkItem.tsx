@@ -3,18 +3,21 @@ import React, { useState, useEffect } from 'react'
 import { HistoryItemSublinkView, HistoryItemSublinkViewer } from "../popup"
 
 
+export interface OutlinkSublinkNeeds {
+  wasmObserver: PopupWasmObserver,
+  sublinkViewer: HistoryItemSublinkViewer
+}
 
 interface OutlinkProps {
   historyItem: HistoryItem,
-  wasmObserver: PopupWasmObserver,
-  sublinkViewer: HistoryItemSublinkViewer
+  sublinkNeeds: OutlinkSublinkNeeds
 }
 
 const OutLinkItem = (props: OutlinkProps) => {
   const [historyItemSublinks, setHistoryItemSublinks] = useState<HistoryItemSublinkView>(null)
 
   const loadHistoryItemChildren = () => {
-    props.wasmObserver.initializationSubscription((worker) => {
+    props.sublinkNeeds.wasmObserver.initializationSubscription((worker) => {
       worker.getEdges(props.historyItem).then(edges => {
         if (edges == undefined) return
         setHistoryItemSublinks({historyItem: props.historyItem, sublinks: edges})
@@ -32,7 +35,7 @@ const OutLinkItem = (props: OutlinkProps) => {
       <input 
         className="button"
         type="button"
-        onClick={() => props.sublinkViewer(historyItemSublinks)}
+        onClick={() => props.sublinkNeeds.sublinkViewer(historyItemSublinks)}
         value="View Sublinks" />
     ) : null
 

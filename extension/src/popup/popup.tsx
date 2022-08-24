@@ -4,6 +4,7 @@ import Header from './main-components/Header'
 import SearchDisplay from './main-components/SearchDisplay'
 import SublinkView from './main-components/SublinkView'
 import PopupWasmObserver from './PopupWasmObserver'
+import { OutlinkSublinkNeeds } from './main-components/OutlinkItem'
 
 export interface HistoryItemSublinkView {
   historyItem: HistoryItem
@@ -99,16 +100,17 @@ class App extends React.Component<AppProps, AppState> {
 
         <SearchDisplay
           displayItems={this.state.displayItems} 
-          wasmObserver={this.wasmObserver} 
-          sublinkViewer={this.sublinkViewer}
+
+          outlinkSublinkNeeds={{sublinkViewer: this.sublinkViewer, wasmObserver: this.wasmObserver}}
         />
 
         <SublinkView 
           hidden={this.state.sublinkViewHidden} 
           onclose={this.closeSublinkView} 
           subLinksView={this.state.activeSublinks}
-          wasmObserver={this.wasmObserver}
-          sublinksViewer={this.sublinkViewer}
+
+          outlinkSublinkNeeds={{wasmObserver: this.wasmObserver, sublinkViewer: this.sublinkViewer}}
+
           back={this.sublinksHistoryControl.activeIndex > 0 ? this.back : null}
           forward={this.sublinksHistoryControl.activeIndex < this.sublinksHistoryControl.history.length - 1 ? this.forward : null}
         />
