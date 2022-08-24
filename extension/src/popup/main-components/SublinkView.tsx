@@ -14,6 +14,31 @@ interface SublinkViewProps {
 
 const SublinkView = (props: SublinkViewProps) => {
 
+  const ref = React.useRef(null)
+  const topOfView = <a ref={ref}></a>
+
+  // Composition with added functionality
+  const openThenScroll = (h: HistoryItemSublinkView) => {
+    props.outlinkSublinkNeeds.sublinkViewer(h)
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const scrollingBack = () => {
+    props.back()
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const scrollingForward = () => {
+    props.forward()
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const updatedOutlinkSublinkNeeds: OutlinkSublinkNeeds = {sublinkViewer: openThenScroll, wasmObserver: props.outlinkSublinkNeeds.wasmObserver}
+
+
+
+  
+
   return (
     <div id='childrenDisplay' className={props.hidden ? "hidden" : ""}>
 
@@ -35,7 +60,7 @@ const SublinkView = (props: SublinkViewProps) => {
             <input
               type='button' 
               className='button sublinkNav' 
-              onClick={props.back}
+              onClick={scrollingBack}
               value='back'/> 
 
             : null }
@@ -44,7 +69,7 @@ const SublinkView = (props: SublinkViewProps) => {
             <input 
               type='button'
               className='button sublinkNav'
-              onClick={props.forward}
+              onClick={scrollingForward}
               value='forward'/>
 
             : null }
@@ -52,10 +77,11 @@ const SublinkView = (props: SublinkViewProps) => {
 
 
         <div id="children">
+          {topOfView}
           {props.subLinksView?.sublinks.map(h => 
             <OutLinkItem key={h.url}
               historyItem={h} 
-              sublinkNeeds={props.outlinkSublinkNeeds} 
+              sublinkNeeds={updatedOutlinkSublinkNeeds} 
           />)}
         </div>
       </div>
