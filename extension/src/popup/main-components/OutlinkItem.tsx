@@ -1,58 +1,55 @@
 import PopupWasmObserver from "../PopupWasmObserver"
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { HistoryItemSublinkView, HistoryItemSublinkViewer } from "../popup"
 
-interface OutlinkState {
-  historyItemSublinks: HistoryItemSublinkView
-}
 
-interface OutlinkProps {
-  historyItem: HistoryItem,
+export interface OutlinkSublinkNeeds {
   wasmObserver: PopupWasmObserver,
   sublinkViewer: HistoryItemSublinkViewer
 }
 
-export default class OutLinkItem extends React.Component<OutlinkProps, OutlinkState> {
-  constructor(props: OutlinkProps) {
-    super(props)
+interface OutlinkProps {
+  historyItem: HistoryItem,
+  sublinkNeeds: OutlinkSublinkNeeds
+}
 
-    this.state = {
-      historyItemSublinks: null
-    }
+const OutLinkItem = (props: OutlinkProps) => {
+  const [historyItemSublinks, setHistoryItemSublinks] = useState<HistoryItemSublinkView>(null)
 
-  }
-
-  loadHistoryItemChildren = () => {
-    this.props.wasmObserver.initializationSubscription((worker) => {
-      worker.getEdges(this.props.historyItem).then(edges => {
+  const loadHistoryItemChildren = () => {
+    props.sublinkNeeds.wasmObserver.initializationSubscription((worker) => {
+      worker.getEdges(props.historyItem).then(edges => {
         if (edges == undefined) return
-        this.setState({historyItemSublinks: {historyItem: this.props.historyItem, sublinks: edges}})
+        setHistoryItemSublinks({historyItem: props.historyItem, sublinks: edges})
       })
     })
   }
 
-  render () {
-    this.loadHistoryItemChildren()
+  useEffect(() => {
+    loadHistoryItemChildren()
+  }, [])
 
-    const viewSublinksButton = this.state.historyItemSublinks ?
-      (
-        <input 
-          className="button"
-          type="button"
-          onClick={() => this.props.sublinkViewer(this.state.historyItemSublinks)}
-          value="View Sublinks" />
-      ) : null
 
-    return (
-      <div className='outLink' tabIndex={-1}>
-        {this.props.historyItem.title}
-        <div className='actionContainer'>
-          <a className='button' href={this.props.historyItem.url} target="_blank">Open</a>
-          {viewSublinksButton}
-        </div>
+  const viewSublinksButton = historyItemSublinks ?
+    (
+      <input 
+        className="button"
+        type="button"
+        onClick={() => props.sublinkNeeds.sublinkViewer(historyItemSublinks)}
+        value="View Sublinks" />
+    ) : null
+
+  return (
+    <div className='outLink' tabIndex={-1}>
+      {props.historyItem.title}
+      <div className='actionContainer'>
+        <a className='button' href={props.historyItem.url} target="_blank">Open</a>
+        {viewSublinksButton}
       </div>
-    )
-  } 
+    </div>
+  )
 
 }
+
+export default OutLinkItem
 

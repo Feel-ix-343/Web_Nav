@@ -1,32 +1,27 @@
 import React from 'react'
-import { HistoryItemSublinkView, HistoryItemSublinkViewer } from '../popup'
-import PopupWasmObserver from '../PopupWasmObserver'
-import OutlinkItem from './OutlinkItem'
-
-interface SearchDisplayState{}
+import OutlinkItem, { OutlinkSublinkNeeds } from './OutlinkItem'
 
 interface SearchDisplayProps{
   displayItems: HistoryItem[],
-  wasmObserver: PopupWasmObserver,
-  sublinkViewer: HistoryItemSublinkViewer
+
+  outlinkSublinkNeeds: OutlinkSublinkNeeds
 }
 
 
-export default class SearchDisplay extends React.Component<SearchDisplayProps, SearchDisplayState> {
-  constructor(props: SearchDisplayProps) {
-    super(props)
-  }
+const SearchDisplay = (props: SearchDisplayProps) => {
 
-  render() {
-    
-    let outLinkItems = this.props.displayItems.map(historyItem => <OutlinkItem key={historyItem.id} historyItem={historyItem} wasmObserver={this.props.wasmObserver} sublinkViewer={this.props.sublinkViewer}/>)
-    
-    return(
-      <div id='data'>
-        {outLinkItems}
-      </div>
-    )
-  }
+  let outLinkItems = props.displayItems.map(historyItem => 
+    <OutlinkItem
+      key={historyItem.id} 
+      historyItem={historyItem} 
+      sublinkNeeds={props.outlinkSublinkNeeds}
+    />)
+  
+  return(
+    <div id='data'>
+      {outLinkItems}
+    </div>
+  )
 }
 
-
+export default SearchDisplay

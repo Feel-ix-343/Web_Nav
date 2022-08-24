@@ -1,7 +1,6 @@
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-// TODO: maybe add a search loading animation
 interface HeaderState {
   value: string
 }
@@ -11,51 +10,49 @@ interface HeaderProps {
 }
 
 
-export default class Header extends React.Component<HeaderProps, HeaderState> {
-  constructor(props: HeaderProps) {
-    super(props)
+const Header = (props: HeaderProps) =>  {
 
-    this.state = {
-      value: ""
-    }
+  const [value, setValue] = useState("")
 
-    this.importPreviousSearch()
-  }
+  // Only want to run at initial render
+  useEffect(() => {
+    importPreviousSearch()
+  }, [])
 
-  importPreviousSearch = () => {
+  const importPreviousSearch = () => {
     chrome.storage.sync.get(['filter'], (r) => {
       let prevSearch = r.filter
-      if (prevSearch) {
-        this.setState({value: prevSearch})
+      if (prevSearch != undefined) {
+        setValue(prevSearch)
 
-        // Will need to update the display at the start of the App
-        this.props.searchSubscription(prevSearch)
+        // Will update the display with the fetched value at the start of the App
+        props.searchSubscription(prevSearch)
       } 
     })
   }
 
-  updateGoogleStorage = (newSearch: string) => {
+  const updateGoogleStorage = (newSearch: string) => {
     chrome.storage.sync.set({"filter": newSearch})
   }
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let search = event.target.value
 
-    this.setState({value: search})
+    setValue(search)
 
-    this.updateGoogleStorage(search)
-    this.props.searchSubscription(search)
+    updateGoogleStorage(search)
+    props.searchSubscription(search)
   }
 
-  render() {
-    return(
-      <div id='header'>
-        <h1 id='heading'>Web-Nav</h1>
-        <input autoFocus id='inputBox'type='text' value={this.state.value} onChange={this.handleChange} placeholder='Search' />
-      </div>
-    )
-  }
+
+
+  return(
+    <div id='header'>
+      <h1 id='heading'>Web-Nav</h1>
+      <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
+    </div>
+  )
 }
 
-
+export default Header
 

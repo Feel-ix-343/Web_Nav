@@ -1,7 +1,6 @@
 import React from 'react'
-import { HistoryItemSublinkView, HistoryItemSublinkViewer } from '../popup'
-import PopupWasmObserver from '../PopupWasmObserver'
-import OutLinkItem from './OutlinkItem'
+import { HistoryItemSublinkView } from '../popup'
+import OutLinkItem, { OutlinkSublinkNeeds } from './OutlinkItem'
 
 interface SublinkViewProps {
   subLinksView: HistoryItemSublinkView,
@@ -9,51 +8,88 @@ interface SublinkViewProps {
   onclose: () => void,
   back: (() => void) | null,
   forward: (() => void) | null,
-  wasmObserver: PopupWasmObserver,
-  sublinksViewer: HistoryItemSublinkViewer
+
+  outlinkSublinkNeeds: OutlinkSublinkNeeds
 }
 
-export default class SublinkView extends React.Component<SublinkViewProps> {
-  render() { 
-    return (
-      <div id='childrenDisplay' className={this.props.hidden ? "hidden" : ""}> 
+const SublinkView = (props: SublinkViewProps) => {
+
+  const ref = React.useRef(null)
+  const topOfView = <a ref={ref}></a>
+
+  // Composition with added functionality
+  const openThenScroll = (h: HistoryItemSublinkView) => {
+    props.outlinkSublinkNeeds.sublinkViewer(h)
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const scrollingBack = () => {
+    props.back()
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const scrollingForward = () => {
+    props.forward()
+    ref.current?.scrollIntoView({behavior: "smooth"})
+  }
+
+  const updatedOutlinkSublinkNeeds: OutlinkSublinkNeeds = {sublinkViewer: openThenScroll, wasmObserver: props.outlinkSublinkNeeds.wasmObserver}
+
+
+
+  
+
+  return (
+    <div id='childrenDisplay' className={props.hidden ? "hidden" : ""}>
+
+      <div id='activeHistoryItemStatus'>
+        <div>{props.subLinksView?.historyItem.title}</div>
+      </div>
+
+      <div id='childrenDisplaySub' > 
         <div className='sublinkNavContainer'>
           <input
             id="closeSublinkView" 
             type="button" 
             className='button' 
-            onClick={this.props.onclose} 
+            onClick={props.onclose} 
             value="close" />
 
 
-          {this.props.back ? 
+          {props.back ? 
             <input
               type='button' 
               className='button sublinkNav' 
-              onClick={this.props.back}
+              onClick={scrollingBack}
               value='back'/> 
 
             : null }
 
-          {this.props.forward ? 
+          {props.forward ? 
             <input 
               type='button'
               className='button sublinkNav'
-              onClick={this.props.forward}
+              onClick={scrollingForward}
               value='forward'/>
 
             : null }
         </div>
 
+
         <div id="children">
-          {this.props.subLinksView?.sublinks.map(h => <OutLinkItem key={Math.random()}historyItem={h} wasmObserver={this.props.wasmObserver} sublinkViewer={this.props.sublinksViewer} />)}
+          {topOfView}
+          {props.subLinksView?.sublinks.map(h => 
+            <OutLinkItem key={h.url}
+              historyItem={h} 
+              sublinkNeeds={updatedOutlinkSublinkNeeds} 
+          />)}
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 
-
+export default SublinkView
 
 
