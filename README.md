@@ -4,11 +4,17 @@
 Analyses chrome history and suggests websites related to a search query to make repetitive (yet specific) web navigation more efficient.
 
 ## Features
-- Searching through previously visited websites by webpage title (sort of like searching through chrome history)
-- Finding the sub-links of a web-page.
-![image|width=400](https://user-images.githubusercontent.com/88951499/184465969-ab93efec-c560-41b0-b29f-0b3602b19aeb.png)
-![image](https://user-images.githubusercontent.com/88951499/184466044-975c54e0-837d-4fef-aa75-83236c62e6d4.png)
+*Click the drop down for more information. I suggesest checking out "navigating thorugh sub-links" first*
 
+- Searching through previously visited websites by webpage title (sort of like searching through chrome history)
+<details>
+<summary>Navigating through the sub-links of a web-page</summary>
+
+![image|width=400](https://user-images.githubusercontent.com/88951499/184465969-ab93efec-c560-41b0-b29f-0b3602b19aeb.png)
+
+
+<img src="https://user-images.githubusercontent.com/88951499/184466044-975c54e0-837d-4fef-aa75-83236c62e6d4.png" width="500" height="auto" />
+</details>
 
 - Shortcuts for easy navigation
 
