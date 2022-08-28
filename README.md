@@ -1,14 +1,30 @@
 # Web Nav
 *The command pallet for the web*
 
-Analyses chrome history and suggests websites related to a search query to make repetitive (yet specific) web navigation more efficient.
+
+Analyses chrome history and suggests websites related to a search query to make repetitive (but specific) web navigation more efficient.
+
+This extension does not provide an alternative to bookmarks, rather it is right between the repetitive use case of bookmarks and the specifics of a google search. 
+
+It is for navigating to that one email or assignment on any website (in your history) in one click, rather than going through mutliple pages and sitting through annoying loading times to get there.
 
 ## Features
-*Click the drop down for more information. I suggesest checking out "navigating thorugh sub-links" first*
+*Click through the drop downs for more information*
 
-- Searching through previously visited websites by webpage title (sort of like searching through chrome history)
 <details>
-<summary>Navigating through the sub-links of a web-page</summary>
+  <summary>Searching through previously visited websites by webpage title</summary>
+  A few examples:
+  
+  - Navigating directly to a classes grades (example search query: "chem grades" -> click) instead of logging into canvas, clicking on chemistry, and then finaly clicking on grades
+  - Opening a specific folder on github (example seach query: "Web_nav readme" -> click) instead of loading onto github, opening Web_Nav, then clicking on readme
+  
+  Anything specific that you can think of, just try to search.
+
+  If nothing comes up from your search history, you should use the feature below (sub-links!)
+</details>
+
+<details>
+<summary>Navigating through the sub-links of a web-page (clickme!)</summary>
 
 ![image|width=400](https://user-images.githubusercontent.com/88951499/184465969-ab93efec-c560-41b0-b29f-0b3602b19aeb.png)
 
