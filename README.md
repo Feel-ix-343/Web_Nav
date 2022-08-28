@@ -8,8 +8,13 @@ This extension does not provide an alternative to bookmarks, rather it is right 
 
 It is for navigating to that one email or assignment on any website (in your history) in one click, rather than going through mutliple pages and sitting through annoying loading times to get there.
 
+
+
+
 ## Features
 *Click through the drop downs for more information*
+
+![image](https://user-images.githubusercontent.com/88951499/187056186-bd78142a-a58f-4410-a4d9-65b8358a526e.png)
 
 <details>
   <summary>Searching through previously visited websites by webpage title</summary>
@@ -22,6 +27,8 @@ It is for navigating to that one email or assignment on any website (in your his
 
   If nothing comes up from your search history, you should use the feature below (sub-links!)
 </details>
+
+![image](https://user-images.githubusercontent.com/88951499/187056225-6cb7bc1e-e299-40dc-98bc-24f752d473db.png)
 
 <details>
 <summary>Navigating through the sub-links of a web-page (clickme!)</summary>
