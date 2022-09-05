@@ -39,7 +39,7 @@ const OutLinkItem = (props: OutlinkProps) => {
         value="View Sublinks" />
     ) : null
 
-  const shortenTitle = (title: String) => {
+  const shortenTitle = (title: string) => {
     let titleMaxlength = 80
     if (title.length > titleMaxlength) {
       return title.slice(0, titleMaxlength) + "..."
@@ -48,9 +48,13 @@ const OutLinkItem = (props: OutlinkProps) => {
     }
   }
 
+  const urlPreview = (url: string) => {
+    return props.historyItem.url.match(/^.+\.com/)?.[0]
+  }
+
   return (
     <div className='outLink' tabIndex={-1}>
-      {shortenTitle(props.historyItem.title)}
+      {shortenTitle(props.historyItem.title)} | {urlPreview(props.historyItem.url)}
       <div className='actionContainer'>
         <a className='button' href={props.historyItem.url} target="_blank">Open</a>
         {viewSublinksButton}
