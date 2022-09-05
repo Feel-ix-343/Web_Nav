@@ -89,6 +89,7 @@ class App extends React.Component<AppProps, AppState> {
 
     let newActiveSublinks: HistoryItemSublinkView = this.sublinksHistoryControl.history[newIndex]
 
+
     this.setState({activeSublinks: newActiveSublinks})
   }
   

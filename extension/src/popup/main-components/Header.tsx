@@ -1,9 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
 
-interface HeaderState {
-  value: string
-}
 interface HeaderProps {
 // Turn this into a Rxjs observer
   searchSubscription: (filter: string) => void

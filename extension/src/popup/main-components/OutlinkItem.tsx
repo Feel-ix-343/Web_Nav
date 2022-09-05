@@ -39,6 +39,7 @@ const OutLinkItem = (props: OutlinkProps) => {
         value="View Sublinks" />
     ) : null
 
+// TODO: Shorten title when it is more than 3 lines
   return (
     <div className='outLink' tabIndex={-1}>
       {props.historyItem.title}

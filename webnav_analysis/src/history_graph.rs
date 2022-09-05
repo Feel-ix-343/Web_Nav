@@ -14,6 +14,7 @@ impl HistoryGraph {
         /// Example: github.com
         type BaseUrl = String;
 
+
         let grouped_by_baseurl: BTreeMap<BaseUrl, Vec<&RustHistoryItem>> = history_arr
             .iter()
             .fold(BTreeMap::new(), |mut map, history_item| {
@@ -49,6 +50,7 @@ impl HistoryGraph {
 
         let all_rules: Vec<&(&RustHistoryItem, &RustHistoryItem)> = baseurl_graph_rules.values().flatten().collect();
 
+
         HistoryGraph {
             data: all_rules
                 .iter()
@@ -68,7 +70,7 @@ impl HistoryGraph {
 }
 
 
-
+// TODO: Filter out get request headers
 /// Splits Urls by the '/' in them.
 fn url_path_list(url: &String) -> Vec<String> {
     let mut url_simplified = url
