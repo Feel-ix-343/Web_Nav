@@ -39,10 +39,18 @@ const OutLinkItem = (props: OutlinkProps) => {
         value="View Sublinks" />
     ) : null
 
-// TODO: Shorten title when it is more than 3 lines
+  const shortenTitle = (title: String) => {
+    let titleMaxlength = 80
+    if (title.length > titleMaxlength) {
+      return title.slice(0, titleMaxlength) + "..."
+    } else {
+      return title
+    }
+  }
+
   return (
     <div className='outLink' tabIndex={-1}>
-      {props.historyItem.title}
+      {shortenTitle(props.historyItem.title)}
       <div className='actionContainer'>
         <a className='button' href={props.historyItem.url} target="_blank">Open</a>
         {viewSublinksButton}
