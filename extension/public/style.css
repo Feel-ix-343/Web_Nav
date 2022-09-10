@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
-/* TODO: Fix fonts */
 /* TODO: Get rid of unneeded code  */
 
 ::-webkit-scrollbar {
@@ -10,10 +9,8 @@
 }
 
 body {
-    max-width: 400px;
-    min-width: 400px;
-    max-height: 500px;
-    min-height: 500px;
+    width: 500px;
+    height: 800px;
     font-family: 'Mulish', sans-serif;
 
     margin: 0;
@@ -124,7 +121,7 @@ body {
 #childrenDisplay {
   position: fixed;
   /* Easy fix for the .hidden class */
-  bottom: -40px;
+  bottom: 0;
 
   max-height: 100vh;
   width: 100vw;
@@ -134,9 +131,10 @@ body {
 
 #childrenDisplay.hidden {
   max-height: 0;
+  pointer-events: none;
   /* matching the size of the protruding status */
-  bottom: -40px;
-  /* opacity: 0; */
+  /* bottom: -40px; */
+  opacity: 0;
   transition: all 400ms ease-out;
 }
 
@@ -242,4 +240,3 @@ a.button {
   color: black;
 }
 
-/*TODO: FIx unable to click at bootm */
