@@ -110,9 +110,6 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
     let hist_item_url_list = url_path_list(&hist_item.url); 
     let hist_url_list_len = hist_item_url_list.len() as u32;
 
-    if hist_url_list_len == 1 { // No parent
-        return None;
-    }
 
     let depth = depth_option.unwrap_or(hist_url_list_len); // Either the depth is specified (recursive) or it is None (Called by base with links)
     
@@ -120,6 +117,9 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
     let depths: Vec<u32> = baseurl_depth_lists.keys().map(|d| *d).collect();
     let min_depth: u32 = *(depths.iter().min().unwrap());
 
+    if hist_url_list_len == min_depth { // No parent
+        return None;
+    }
 
     if depth <= min_depth {
         return Some((baseurl_depth_lists[&min_depth][0], hist_item))
