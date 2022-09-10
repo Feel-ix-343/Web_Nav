@@ -1,9 +1,6 @@
 use serde::Deserialize;
-use wasm_bindgen_test::console_log;
 use std::collections::BTreeMap;
 use crate::web_interface::RustHistoryItem;
-
-// TODO: Fix double sublink bug. Occurs when a link has a sublink of the same link
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct HistoryGraph {
@@ -125,7 +122,6 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
 
 
     if depth <= min_depth {
-        console_log!("{:?}, {:?} {depth} {min_depth}", hist_item, baseurl_depth_lists[&min_depth]);
         return Some((baseurl_depth_lists[&min_depth][0], hist_item))
     } else {
         if depths.contains(&(depth - 1)) { // The possible parent depth (depth - 1) needs to exist in the base
