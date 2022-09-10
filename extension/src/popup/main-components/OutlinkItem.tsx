@@ -49,7 +49,12 @@ const OutLinkItem = (props: OutlinkProps) => {
   }
 
   const urlPreview = (url: string) => {
-    return props.historyItem.url.match(/^.+\.com/)?.[0]
+    let urlMaxlength = 80
+    if (url.length > urlMaxlength) {
+      return url.slice(0, urlMaxlength) + "..."
+    } else {
+      return url
+    }
   }
 
   return (
