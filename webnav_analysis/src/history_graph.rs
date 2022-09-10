@@ -1,7 +1,9 @@
 use serde::Deserialize;
+use wasm_bindgen_test::console_log;
 use std::collections::BTreeMap;
 use crate::web_interface::RustHistoryItem;
 
+// TODO: Fix double sublink bug. Occurs when a link has a sublink of the same link
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct HistoryGraph {
@@ -79,7 +81,7 @@ fn url_path_list(url: &String) -> Vec<String> {
 
     if &url_simplified[url_simplified.len()-1..] == "/" {
         url_simplified.remove(url_simplified.len()-1);
-    };
+    }
 
     url_simplified.split("/").map(|s| s.to_owned()).collect()
 }
@@ -91,8 +93,13 @@ fn base_with_links<'a>( baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryI
     base_hist_items
         .iter()
         .fold(Vec::new(), |mut graph, &history_item| { 
-            graph.push(find_parent_item(history_item, baseurl_depth_lists, None));
-            graph
+            match find_parent_item(history_item, baseurl_depth_lists, None) {
+                Some(link) => {
+                    graph.push(link);
+                    graph
+                },
+                None => graph
+            }
          })
 }
 
@@ -101,10 +108,14 @@ fn base_with_links<'a>( baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryI
 /// on the url) for the given hist item. Returns a tuple (parent item found, inputted_history_item)
 fn find_parent_item<'a>(hist_item: &'a RustHistoryItem, 
                         baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
-                        depth_option: Option<u32>) -> (&'a RustHistoryItem, &'a RustHistoryItem) {
+                        depth_option: Option<u32>) -> Option<(&'a RustHistoryItem, &'a RustHistoryItem)> {
 
     let hist_item_url_list = url_path_list(&hist_item.url); 
     let hist_url_list_len = hist_item_url_list.len() as u32;
+
+    if hist_url_list_len == 1 { // No parent
+        return None;
+    }
 
     let depth = depth_option.unwrap_or(hist_url_list_len); // Either the depth is specified (recursive) or it is None (Called by base with links)
     
@@ -114,7 +125,8 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
 
 
     if depth <= min_depth {
-        return (baseurl_depth_lists[&min_depth][0], hist_item)
+        console_log!("{:?}, {:?} {depth} {min_depth}", hist_item, baseurl_depth_lists[&min_depth]);
+        return Some((baseurl_depth_lists[&min_depth][0], hist_item))
     } else {
         if depths.contains(&(depth - 1)) { // The possible parent depth (depth - 1) needs to exist in the base
                                             
@@ -127,7 +139,7 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
                 println!("{:?}", hist_item_url_list_drop_last);
 
                 if hist_item_url_list_drop_last == parent_url_list { // A match has been found
-                    return (possible_par_hist_item, hist_item)
+                    return Some((possible_par_hist_item, hist_item))
                 }
             }
         }
@@ -175,7 +187,7 @@ pub mod tests {
         ]);
         let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
 
-        debug_assert_eq!(r, (&parent, &hist_item))
+        debug_assert_eq!(r, Some((&parent, &hist_item)))
     }
 
     #[test]
@@ -191,8 +203,22 @@ pub mod tests {
         ]);
         let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
 
-        debug_assert_eq!(r, (&parent, &hist_item))
+        debug_assert_eq!(r, Some((&parent, &hist_item)))
     }
+
+    #[test]
+    fn test_double_sublink_issue() {
+        let hist_item = RustHistoryItem { title: "test".to_string(), url: "https://github.com/".to_string(), visit_count: 69 };
+
+        let baseurl_depth_lists = BTreeMap::from([
+            (1, vec![&hist_item])
+        ]);
+
+        let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
+
+        debug_assert_eq!(r, None)
+    }
+
 
 }
 
