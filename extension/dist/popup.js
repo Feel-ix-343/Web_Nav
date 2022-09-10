@@ -130,9 +130,13 @@ var OutLinkItem = function OutLinkItem(props) {
   };
 
   var urlPreview = function urlPreview(url) {
-    var _props$historyItem$ur;
+    var urlMaxlength = 80;
 
-    return (_props$historyItem$ur = props.historyItem.url.match(/^.+\.com/)) === null || _props$historyItem$ur === void 0 ? void 0 : _props$historyItem$ur[0];
+    if (url.length > urlMaxlength) {
+      return url.slice(0, urlMaxlength) + "...";
+    } else {
+      return url;
+    }
   };
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default().createElement("div", {
