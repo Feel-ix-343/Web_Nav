@@ -49,7 +49,7 @@ const OutLinkItem = (props: OutlinkProps) => {
   }
 
   const urlPreview = (url: string) => {
-    let urlMaxlength = 80
+    let urlMaxlength = 40
     if (url.length > urlMaxlength) {
       return url.slice(0, urlMaxlength) + "..."
     } else {
