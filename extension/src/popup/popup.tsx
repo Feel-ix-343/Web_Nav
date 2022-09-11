@@ -22,8 +22,8 @@ interface AppState {
 class App extends React.Component<AppProps, AppState> {
   wasmObserver: PopupWasmObserver
 
-  // TODO: Fix the ''{back, back, forward ...} -> view' bug
-  sublinksHistoryControl: {history: HistoryItemSublinkView[], activeIndex: number}
+  // sublinksHistoryControl: {history: HistoryItemSublinkView[], activeIndex: number}
+  sublinksHistoryControl: {past: HistoryItemSublinkView[], current: HistoryItemSublinkView, future: HistoryItemSublinkView[]}
   
 
   constructor(props: AppProps) {
@@ -38,8 +38,9 @@ class App extends React.Component<AppProps, AppState> {
 
     // Default values
     this.sublinksHistoryControl = {
-      history: [],
-      activeIndex: 0
+      past: [],
+      current: null,
+      future: []
     }
 
     this.wasmObserver = new PopupWasmObserver()
@@ -54,7 +55,12 @@ class App extends React.Component<AppProps, AppState> {
   sublinkViewer: HistoryItemSublinkViewer = (sublinks: HistoryItemSublinkView) => {
     console.log(sublinks)
 
-    this.sublinksHistoryControl.activeIndex = this.sublinksHistoryControl.history.push(sublinks) - 1 // Pushes and assigns new length
+    if (this.sublinksHistoryControl.current == null) this.sublinksHistoryControl.current = sublinks
+    else {
+      this.sublinksHistoryControl.past.push(this.sublinksHistoryControl.current)
+      this.sublinksHistoryControl.future = []
+      this.sublinksHistoryControl.current = sublinks
+    }
 
     this.setState({
       activeSublinks: sublinks,
@@ -63,31 +69,30 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   closeSublinkView = () => {
-    this.sublinksHistoryControl.history = []
-    this.sublinksHistoryControl.activeIndex = 0
+    this.sublinksHistoryControl = {past: [], current: null, future: []}
 
     this.setState({sublinkViewHidden: true})
   }
 
   back = () => {
-    if (this.sublinksHistoryControl.activeIndex <= 0) return
+    if (!this.sublinksHistoryControl.past.length) return
+    console.log(this.sublinksHistoryControl.past.length)
 
-    let newIndex: number = this.sublinksHistoryControl.activeIndex - 1
-    this.sublinksHistoryControl.activeIndex = newIndex
+    this.sublinksHistoryControl.future.push(this.sublinksHistoryControl.current)
+    this.sublinksHistoryControl.current = this.sublinksHistoryControl.past.pop()
 
-    let newActiveSublinks: HistoryItemSublinkView = this.sublinksHistoryControl.history[newIndex]
+    let newActiveSublinks: HistoryItemSublinkView = this.sublinksHistoryControl.current
 
     this.setState({activeSublinks: newActiveSublinks})
-
   }
 
   forward = () => {
-    if (this.sublinksHistoryControl.activeIndex >= this.sublinksHistoryControl.history.length - 1) return
+    if (!this.sublinksHistoryControl.future.length) return
 
-    let newIndex: number = this.sublinksHistoryControl.activeIndex + 1
-    this.sublinksHistoryControl.activeIndex = newIndex
+    this.sublinksHistoryControl.past.push(this.sublinksHistoryControl.current)
+    this.sublinksHistoryControl.current = this.sublinksHistoryControl.future.pop()
 
-    let newActiveSublinks: HistoryItemSublinkView = this.sublinksHistoryControl.history[newIndex]
+    let newActiveSublinks: HistoryItemSublinkView = this.sublinksHistoryControl.current
 
 
     this.setState({activeSublinks: newActiveSublinks})
@@ -97,6 +102,7 @@ class App extends React.Component<AppProps, AppState> {
 
   // TODO: Add a settings and info section (with graph view)
   render() {
+  console.log(this.sublinksHistoryControl)
     return(
       <div>
         <Header searchSubscription={this.loadSearch} />
@@ -114,8 +120,8 @@ class App extends React.Component<AppProps, AppState> {
 
           outlinkSublinkNeeds={{wasmObserver: this.wasmObserver, sublinkViewer: this.sublinkViewer}}
 
-          back={this.sublinksHistoryControl.activeIndex > 0 ? this.back : null}
-          forward={this.sublinksHistoryControl.activeIndex < this.sublinksHistoryControl.history.length - 1 ? this.forward : null}
+          back={this.sublinksHistoryControl.past.length ? this.back : null}
+          forward={this.sublinksHistoryControl.future.length ? this.forward : null}
         />
 
       </div>
