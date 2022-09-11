@@ -38,7 +38,7 @@ impl HistoryGraph {
             })
             .collect();
 
-        // A graph rule is something like Link -> Link, or in this case (Link, Link). I did my modeling in mathematica, and this is how it is
+        // A graph rule is something like Link -> Link, or in this case (Link, Link).
         let baseurl_graph_rules: BTreeMap<&BaseUrl, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
             .iter()
             .map(|(base, history_items)| {
@@ -69,7 +69,6 @@ impl HistoryGraph {
 }
 
 
-// TODO: Filter out get request headers
 /// Splits Urls by the '/' in them.
 fn url_path_list(url: &String) -> Vec<String> {
     let mut url_simplified = url
