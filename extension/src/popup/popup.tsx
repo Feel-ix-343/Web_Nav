@@ -4,7 +4,6 @@ import Header from './main-components/Header'
 import SearchDisplay from './main-components/SearchDisplay'
 import SublinkView from './main-components/SublinkView'
 import PopupWasmObserver from './PopupWasmObserver'
-import { OutlinkSublinkNeeds } from './main-components/OutlinkItem'
 
 export interface HistoryItemSublinkView {
   historyItem: HistoryItem

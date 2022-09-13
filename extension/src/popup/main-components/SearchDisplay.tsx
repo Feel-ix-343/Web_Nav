@@ -1,11 +1,13 @@
 import React from 'react'
 import OutlinkItem, { OutlinkSublinkNeeds } from './OutlinkItem'
 
+// TODO: FIx one display item stretch
 interface SearchDisplayProps{
   displayItems: HistoryItem[],
 
   outlinkSublinkNeeds: OutlinkSublinkNeeds
 }
+
 
 
 const SearchDisplay = (props: SearchDisplayProps) => {
