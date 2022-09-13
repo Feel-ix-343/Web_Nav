@@ -101,10 +101,9 @@ class App extends React.Component<AppProps, AppState> {
 
   // TODO: Add a settings and info section (with graph view)
   render() {
-  console.log(this.sublinksHistoryControl)
     return(
       <div>
-        <Header searchSubscription={this.loadSearch} />
+        <Header searchSubscription={this.loadSearch} wasmObserver={this.wasmObserver} />
 
         <SearchDisplay
           displayItems={this.state.displayItems} 

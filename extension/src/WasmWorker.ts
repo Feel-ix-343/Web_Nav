@@ -6,22 +6,31 @@ import * as wasm from 'webnav_analysis'
 
 
 let searchProcess: wasm.WebAnalyzation
+let initializationTime: number
+
+async function getInitialiationTime() {
+  return initializationTime
+}
 
 // I made this into its own function as to make sure that wasm.default, and trackWasmInit are executed sequentially
 async function initialize(history: HistoryItem[]) {
   await wasm.default()
 
-  searchProcess = await trackWasmInit(history)
+  let r = await trackWasmInit(history)
+  searchProcess = r.searchProcess
+  initializationTime = r.initializationTime
+  console.log(initializationTime);
 }
 
+
 // Time the wasm request and return the wasm object
-async function trackWasmInit(history: HistoryItem[]): Promise<wasm.WebAnalyzation> {
+async function trackWasmInit(history: HistoryItem[]) {
   const start = performance.now()
   let testSearchProcess = new wasm.WebAnalyzation(history);
   const end = performance.now()
   console.log(`Initialization took ${end - start} milliseconds.`)
 
-  return testSearchProcess
+  return { searchProcess: testSearchProcess, initializationTime: end - start }
 }
 
 
@@ -39,6 +48,7 @@ async function getEdges(historyItem: HistoryItem): Promise<HistoryItem[]> {
 const worker = {
   initialize,
   getEdges,
+  getInitialiationTime
 };
 
 export type Worker = typeof worker

@@ -8,7 +8,7 @@
 
 body {
     width: 500px;
-    height: 800px;
+    max-height: 800px;
     font-family: 'Mulish', sans-serif;
 
     margin: 0;
@@ -16,32 +16,61 @@ body {
 
 
 #header {
-    height: 85px;
-    display: grid;
-    justify-content: center;
+    min-height: 80px;
+    display: block;
+
+    padding-top: 20px;
+    
+
+    text-align: center;
 
     background-color: coral;
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
-    padding-bottom: 25px;
 
-    position: fixed;
     width: 100vw;
 
     z-index: 2;
 }
 
+
 #heading {
     font-weight: 800;
     font-size: 32px;
+    margin-top: 0;
     color: white;
-
-    justify-self: center;
 }
+
+#infoButton {
+  position: absolute;
+  right: 60px;
+  top: 30px;
+}
+
+#info {
+  height: 30px;
+  transition: all 400ms ease-out;
+  text-align: center;
+  padding-bottom: 25px;
+}
+
+#info > p {
+  color: white;
+  font-size: 15px;
+}
+
+#info.hidden {
+  height: 0;
+  padding-bottom: 0px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 
 #inputBox {
     width: 240px;
     height: 50px;
+    margin-bottom: -25px;
 
     text-align: center;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -52,6 +81,8 @@ body {
     border-style: none;
     font-weight: 300;
 
+    z-index: 30;
+
     transition: all 0.3s ease-in-out;
     font-family: 'Mulish', sans-serif;
 }
@@ -61,9 +92,11 @@ body {
 }
 
 #data {
-    padding-top: 140px;
+    padding-top: 30px;
+    height: 450px;
     display: grid;
     justify-content: center;
+    overflow-y: scroll;
 
 
     margin: auto;
@@ -73,6 +106,7 @@ body {
 .outLink {
     display: block;
     width: 80vw;
+    height: fit-content;
     margin-top: 15px;
     text-align: center;
     line-height: 50px;
@@ -239,4 +273,3 @@ a.button {
   background-color: white;
   color: black;
 }
-

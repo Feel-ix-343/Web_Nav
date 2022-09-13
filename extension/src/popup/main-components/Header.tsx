@@ -1,9 +1,39 @@
 
+
+import { faCircleInfo, faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState, useEffect } from 'react'
+import PopupWasmObserver from '../PopupWasmObserver'
+
+const Info = (props: {hidden: boolean, wasmObserver: PopupWasmObserver}) => {
+
+
+
+  let [allHistoryItems, setHistoryItems] = useState([])
+  let [initializationTiming, setInitializationTiming] = useState(null)
+
+  useEffect(() => {
+    chrome.history.search({ text: "", maxResults: 1000000, startTime: 987532627000 }).then( response => {
+      setHistoryItems(response)
+    })
+  } , [])
+
+  useEffect(() => {
+      props.wasmObserver.initializationSubscription(async (worker) => {
+          setInitializationTiming(await worker.getInitialiationTime())
+        })
+    }, [])
+  return (
+    <div id="info" className={props.hidden ? "hidden" : ""}>
+      <p>History Size: {allHistoryItems?.length}, Initialization Time: {Math.round(initializationTiming)}ms</p>
+    </div>
+  )
+}
 
 interface HeaderProps {
 // Turn this into a Rxjs observer
-  searchSubscription: (filter: string) => void
+  searchSubscription: (filter: string) => void,
+  wasmObserver: PopupWasmObserver
 }
 
 
@@ -36,20 +66,28 @@ const Header = (props: HeaderProps) =>  {
     let search = event.target.value
 
     setValue(search)
-
-    updateGoogleStorage(search)
+updateGoogleStorage(search)
     props.searchSubscription(search)
   }
+
+  const [infoStatus, setInfoStatus] = useState(true)
 
 
 
   return(
     <div id='header'>
       <h1 id='heading'>Web-Nav</h1>
-      <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
+
+      <FontAwesomeIcon id='infoButton'icon={infoStatus ? faCircleInfo : faCircleXmark} className='button' onClick={() => setInfoStatus(!infoStatus)} />
+      <Info hidden={infoStatus} wasmObserver={props.wasmObserver}/>
+      <div>
+        <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
+      </div>
     </div>
+
   )
 }
+
 
 export default Header
 
