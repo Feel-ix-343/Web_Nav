@@ -21,6 +21,7 @@ body {
 
     padding-top: 20px;
     
+    position: fixed;
 
     text-align: center;
 
@@ -30,7 +31,7 @@ body {
 
     width: 100vw;
 
-    z-index: 2;
+    z-index: 60;
 }
 
 
@@ -92,7 +93,7 @@ body {
 }
 
 #data {
-    padding-top: 30px;
+    padding-top: 150px;
     height: 450px;
     display: grid;
     justify-content: center;
@@ -111,6 +112,8 @@ body {
     text-align: center;
     line-height: 50px;
 
+    z-index: 0;
+
 
     padding-left: 10px;
     padding-right: 10px;
@@ -125,6 +128,8 @@ body {
     text-decoration: none !important;
     font-family: 'Mulish', sans-serif;
 }
+ 
+   
 .outLink:hover {
     transform: scale(1.05);
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
