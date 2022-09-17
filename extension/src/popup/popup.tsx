@@ -99,7 +99,6 @@ class App extends React.Component<AppProps, AppState> {
   
 
 
-  // TODO: Add a settings and info section (with graph view)
   render() {
     return(
       <div>
