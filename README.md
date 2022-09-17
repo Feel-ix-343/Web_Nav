@@ -49,5 +49,4 @@ To install and use:
 4. Open chrome://extensions and turn on developer mode
 5. "Load Unpack" the *./extension/dist/* directory and open the extension
 
-
 // TODO: Include graph pictures
