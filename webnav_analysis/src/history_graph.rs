@@ -13,37 +13,30 @@ impl HistoryGraph {
         /// Example: github.com
         type BaseUrl = String;
 
+        type UrlDepth = u32;
 
-        let grouped_by_baseurl: BTreeMap<BaseUrl, Vec<&RustHistoryItem>> = history_arr
-            .iter()
+
+        let grouped_by_baseurl_with_depths: BTreeMap<BaseUrl, BTreeMap<UrlDepth, Vec<&RustHistoryItem>>> = history_arr.iter()
             .fold(BTreeMap::new(), |mut map, history_item| {
-                let baseurl = url_path_list(&history_item.url)[0].to_owned();
-                let base_history_items = map.entry(baseurl).or_insert(vec![]);
-                base_history_items.push(history_item);
+                let url = url_path_list(&history_item.url);  
+                let baseurl = url[0].to_owned();
+                let base_items = map.entry(baseurl).or_insert(BTreeMap::new());
+                let base_items_by_depth = base_items.entry(url.len() as u32).or_insert(vec![]);
+                base_items_by_depth.push(history_item);
                 return map
             });
 
-        // u32 represents the depth of the link
-        let grouped_by_baseurl_with_depths: BTreeMap<&BaseUrl, BTreeMap<u32, Vec<&RustHistoryItem>>> = grouped_by_baseurl
-            .iter()
-            .map(|(baseurl, history_items)| {
-                (baseurl, history_items
-                    .iter()
-                    .fold(BTreeMap::new(), |mut map, &history_item| {
-                        let depth = url_path_list(&history_item.url).len() as u32;
-                        let depth_group = map.entry(depth).or_insert(vec![]);
-                        depth_group.push(history_item);
-                        map
-                    }))
-            })
+        let grouped_by_baseurl: BTreeMap<&BaseUrl, Vec<&RustHistoryItem>> = grouped_by_baseurl_with_depths.iter()
+            .map(|(baseurl, base_with_depths)| (baseurl, base_with_depths.values().cloned().flatten().collect::<Vec<&RustHistoryItem>>()))
             .collect();
+
 
         // A graph rule is something like Link -> Link, or in this case (Link, Link).
         let baseurl_graph_rules: BTreeMap<&BaseUrl, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
             .iter()
-            .map(|(base, history_items)| {
+            .map(|(&base, history_items)| {
                 let base_with_depths = &grouped_by_baseurl_with_depths[base];
-                (base, base_with_links(base_with_depths, history_items))
+                (base, base_with_links(base_with_depths, &history_items))
             })
             .collect();
 
@@ -67,6 +60,7 @@ impl HistoryGraph {
     }
 
 }
+
 
 
 /// Splits Urls by the '/' in them.
