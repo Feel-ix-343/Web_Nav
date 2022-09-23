@@ -31,12 +31,12 @@ It is for navigating to that one email or assignment on any website (in your his
 
 When the title of a main webpage is known, you can easily get to all of its sub pages. 
 
-This is extremely helpful when, for example, you know that you want to go to a specific assignment for a class, but you only know the class's name. Do this:
+This is extremely helpful when, for example, you know that you want to go to a specific assignment for a class, but you don't know the assingment's name. Do this:
 - Search [classname]
 - Click "view sublinks"
 - Then scroll to find the assignment!
 
-Here is a graph and node layout of a few websites I use on a daily basis. The first is instrucutre (canvas) for highschool and the second is Github!
+Here are the sublink graphs of a few websites I use daily. The first is instructure (canvas) for highschool and the second is Github!
 
 ![image|width=400](https://user-images.githubusercontent.com/88951499/184465969-ab93efec-c560-41b0-b29f-0b3602b19aeb.png)
 
@@ -65,5 +65,3 @@ To install and use:
 3. Navigate to the *extension* directory, and run `npm install` to install dependencies. Then run `npm run build` to produce the extension files in the *extension/dist* directory
 4. Open chrome://extensions and turn on developer mode
 5. "Load Unpack" the *./extension/dist/* directory and open the extension
-
-// TODO: Include graph pictures
