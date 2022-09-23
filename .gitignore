@@ -2,6 +2,9 @@
 .idea
 .idea/*
 
+extension/dist
+extension/dist/*
+
 extension/.idea
 exponteion/.idea/*
 
