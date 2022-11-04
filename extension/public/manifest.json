@@ -2,14 +2,15 @@
   "name": "Web-Nav Extension",
 
   "description": "Web-Nav Extension",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 3,
   "permissions": [
-    "activeTab",
-    "scripting",
     "history",
     "storage"
   ],
+  "icons": {
+    "16": "WebNavLogoSmall.png"
+  },
   "cross_origin_embedder_policy": {
     "value": "require-corp"
   },
@@ -19,9 +20,6 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; default-src 'self'; style-src-elem 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
   },
-  "host_permissions": [
-    "http://localhost:9000/*"
-  ],
   "background": {
     "service_worker": "background.js"
   },

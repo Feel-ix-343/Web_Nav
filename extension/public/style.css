@@ -42,6 +42,13 @@ body {
     color: white;
 }
 
+#logo {
+  position: absolute;
+  left: 30px;
+  top: 10px;
+  width: 80px;
+}
+
 #infoButton {
   position: absolute;
   right: 60px;

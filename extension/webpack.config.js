@@ -4,7 +4,7 @@ const path = require('path');
 
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   devtool: 'cheap-module-source-map',
 
 
@@ -37,11 +37,11 @@ module.exports = {
     background: './src/background.ts'
   },
   plugins: [
-    new CopyWebpackPlugin({patterns: [
-      {from: './public/manifest.json'},
-      {from: './public/popup.html'},
-      {from: './public/style.css'},
-    ]}),
+    new CopyWebpackPlugin({
+      patterns: [
+        {from: './public' },
+      ],
+    }),
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),

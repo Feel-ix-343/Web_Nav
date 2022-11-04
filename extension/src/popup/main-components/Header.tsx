@@ -76,9 +76,11 @@ updateGoogleStorage(search)
 
   return(
     <div id='header'>
+      <img id="logo" src={'./WebNavLogo.png'} />
+
       <h1 id='heading'>Web-Nav</h1>
 
-      <FontAwesomeIcon id='infoButton'icon={infoStatus ? faCircleInfo : faCircleXmark} className='button' onClick={() => setInfoStatus(!infoStatus)} />
+      <FontAwesomeIcon id='infoButton' icon={infoStatus ? faCircleInfo : faCircleXmark} className='button' onClick={() => setInfoStatus(!infoStatus)} />
       <Info hidden={infoStatus} wasmObserver={props.wasmObserver}/>
       <div>
         <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
