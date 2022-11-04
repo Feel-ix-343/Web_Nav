@@ -5,10 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState, useEffect } from 'react'
 import PopupWasmObserver from '../PopupWasmObserver'
 
-const Info = (props: {hidden: boolean, wasmObserver: PopupWasmObserver}) => {
 
-
-
+const AppInfo = (props: {hidden: boolean, wasmObserver: PopupWasmObserver}) => {
   let [allHistoryItems, setHistoryItems] = useState([])
   let [initializationTiming, setInitializationTiming] = useState(null)
 
@@ -31,8 +29,11 @@ const Info = (props: {hidden: boolean, wasmObserver: PopupWasmObserver}) => {
 }
 
 interface HeaderProps {
-// Turn this into a Rxjs observer
   searchSubscription: (filter: string) => void,
+
+  /**
+    Used by the info section of the header
+  */
   wasmObserver: PopupWasmObserver
 }
 
@@ -81,7 +82,7 @@ updateGoogleStorage(search)
       <h1 id='heading'>Web-Nav</h1>
 
       <FontAwesomeIcon id='infoButton' icon={infoStatus ? faCircleInfo : faCircleXmark} className='button' onClick={() => setInfoStatus(!infoStatus)} />
-      <Info hidden={infoStatus} wasmObserver={props.wasmObserver}/>
+      <AppInfo hidden={infoStatus} wasmObserver={props.wasmObserver}/>
       <div>
         <input autoFocus id='inputBox'type='text' value={value} onChange={handleChange} placeholder='Search' />
       </div>

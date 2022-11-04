@@ -59,7 +59,8 @@ body {
   height: 30px;
   transition: all 400ms ease-out;
   text-align: center;
-  padding-bottom: 25px;
+  padding-bottom: 10px;
+  padding-top: 0px;
 }
 
 #info > p {
@@ -69,6 +70,7 @@ body {
 
 #info.hidden {
   height: 0;
+  padding-top: 0px;
   padding-bottom: 0px;
   opacity: 0;
   pointer-events: none;
