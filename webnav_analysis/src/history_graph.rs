@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use wasm_bindgen::prelude::wasm_bindgen;
+
 use std::collections::BTreeMap;
 use crate::web_interface::{RustHistoryItem, console_log, performance};
 
