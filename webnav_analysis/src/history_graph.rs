@@ -118,14 +118,12 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
         return Some((baseurl_depth_lists[&min_depth][0], hist_item))
     } else {
         if depths.contains(&(depth - 1)) { // The possible parent depth (depth - 1) needs to exist in the base
-                                            
+
+            let hist_item_url_list_drop_last = &hist_item_url_list[..(depth as usize)-1];
+
             // Checking if the parent depth contains a parent hist item match
             for possible_par_hist_item in baseurl_depth_lists[&(depth-1)].as_slice() {
                 let parent_url_list = url_path_list(&possible_par_hist_item.url);
-
-                let hist_item_url_list_drop_last = &hist_item_url_list[..(depth as usize)-1];
-                println!("{:?}", parent_url_list);
-                println!("{:?}", hist_item_url_list_drop_last);
 
                 if hist_item_url_list_drop_last == parent_url_list { // A match has been found
                     return Some((possible_par_hist_item, hist_item))
