@@ -6,7 +6,7 @@ Analyses chrome history and suggests webpages related to a search query to make 
 
 This extension does not provide an alternative to bookmarks, rather it is right between the repetitive use case of bookmarks and the specificity of a google search. 
 
-It is for navigating to that one email or assignment on any website (in your history) in one click, rather than going through mutliple pages and sitting through annoying loading times to get there.
+It is for navigating to that one email or assignment on any website (in your history) in one click, rather than going through multiple pages and sitting through annoying loading times to get there.
 
 
 
@@ -58,6 +58,8 @@ Click above to read about this feature ^^^^^
 
 
 ## Installation
+INFO: Currently in the process of uploading to the chrome web store
+
 To install and use:
 1. Clone repo into a desired directory using `git clone https://github.com/Feel-ix-343/Web_Nav.git`
 2. Navigate to the *webnav_analysis* directory, and run `wasm-pack build --release --target web` in the command prompt. This will build the rust wasm code and produce an npm package in the *webnav_analysis/pkg* directory
