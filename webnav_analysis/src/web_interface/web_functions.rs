@@ -4,10 +4,14 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     pub fn log(s: &str);
-
 }
 
-
+#[wasm_bindgen]
+extern "C" {
+    #[no_mangle]
+    #[used]
+    pub static performance:web_sys::Performance;
+}
 
 #[wasm_bindgen]
 extern "C" {

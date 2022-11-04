@@ -1,16 +1,17 @@
 use serde::{Serialize, Deserialize};
 use wasm_bindgen::prelude::*;
-use wasm_bindgen_test::console_log;
+pub use wasm_bindgen_test::console_log;
 
 use crate::history_graph::HistoryGraph;
 
 mod web_functions;
 use web_functions::HistoryItem;
+pub use web_functions::performance;
 
 
 // TODO: Check if this is faster than using a JsString. It might be
 /// Rust Representation of the typescript history item
-#[derive(Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize, Clone)]
+#[derive(Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize, Clone, Hash)]
 pub struct RustHistoryItem {
     pub title: String,
     pub url: String,

@@ -1,35 +1,44 @@
 use serde::Deserialize;
+use wasm_bindgen::prelude::wasm_bindgen;
 use std::collections::BTreeMap;
-use crate::web_interface::RustHistoryItem;
+use crate::web_interface::{RustHistoryItem, console_log, performance};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct HistoryGraph {
     pub data: BTreeMap<RustHistoryItem, Vec<RustHistoryItem>>
 }
 
+/// Example: github.com
+type BaseUrl = String;
+
+/// Basically the number of "/" in the URL; For example: https://github.com/felix/is/ has a url depth of 2
+type UrlDepth = u32;
+
+/// Map of rust history items indexed by their url depth;
+type UrlDepths<'a> = BTreeMap<UrlDepth, Vec<&'a RustHistoryItem>>;
+
+
 
 impl HistoryGraph {
     pub fn new(history_arr: &Vec<RustHistoryItem>) -> HistoryGraph { 
-        /// Example: github.com
-        type BaseUrl = String;
+        // Groups the history items into a datastrucutre by the following: {base (github.com) -> {depth, history item}}
+        let grouped_by_baseurl_with_depths = group_history_arr(history_arr);
 
-        type UrlDepth = u32;
-
-
-        let grouped_by_baseurl_with_depths: BTreeMap<BaseUrl, BTreeMap<UrlDepth, Vec<&RustHistoryItem>>> = history_arr.iter()
-            .fold(BTreeMap::new(), |mut map, history_item| {
-                let url = url_path_list(&history_item.url);  
-                let baseurl = url[0].to_owned();
-                let base_items = map.entry(baseurl).or_insert(BTreeMap::new());
-                let base_items_by_depth = base_items.entry(url.len() as u32).or_insert(vec![]);
-                base_items_by_depth.push(history_item);
-                return map
-            });
-
-        let grouped_by_baseurl: BTreeMap<&BaseUrl, Vec<&RustHistoryItem>> = grouped_by_baseurl_with_depths.iter()
-            .map(|(baseurl, base_with_depths)| (baseurl, base_with_depths.values().cloned().flatten().collect::<Vec<&RustHistoryItem>>()))
+        // Getting rid of the grouped by depth for simlicity later
+        let grouped_by_baseurl: BTreeMap<&BaseUrl, Vec<&RustHistoryItem>> = grouped_by_baseurl_with_depths
+            .iter()
+            .map(|(baseurl, base_with_depths)| -> (&BaseUrl, Vec<&RustHistoryItem>) {
+                (baseurl, base_with_depths
+                 .values()
+                 .flatten()
+                 .map(|h: &&RustHistoryItem| *h) // Copying the reference instead of cloning
+                 .collect::<Vec<&RustHistoryItem>>()
+                )
+            })
             .collect();
 
+
+        console_log!("{}", performance.now());
 
         // A graph rule is something like Link -> Link, or in this case (Link, Link).
         let baseurl_graph_rules: BTreeMap<&BaseUrl, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
@@ -38,7 +47,9 @@ impl HistoryGraph {
                 let base_with_depths = &grouped_by_baseurl_with_depths[base];
                 (base, base_with_links(base_with_depths, &history_items))
             })
-            .collect();
+        .collect();
+
+        console_log!("{}", performance.now());
 
         let all_rules: Vec<&(&RustHistoryItem, &RustHistoryItem)> = baseurl_graph_rules.values().flatten().collect();
 
@@ -58,12 +69,29 @@ impl HistoryGraph {
     pub fn get_edges(&self, vertex: &RustHistoryItem) -> Option<&Vec<RustHistoryItem>> {
         self.data.get(vertex)
     }
+}
 
+fn group_history_arr (history_arr: &Vec<RustHistoryItem>) -> BTreeMap<BaseUrl, UrlDepths> {
+    let mut grouped: BTreeMap<BaseUrl, UrlDepths> = BTreeMap::new();
+
+
+    for history_item in history_arr {
+        let url_path_list: Vec<String> = url_path_list(&history_item.url);  
+
+        let baseurl: BaseUrl = url_path_list[0].to_owned();
+
+        let base_items = grouped.entry(baseurl).or_insert(BTreeMap::new()); // Either finds that there is a baseurl entry already, or creates one
+        let base_items_by_depth = base_items.entry(url_path_list.len() as u32).or_insert(vec![]); // Same method as above, but for the depth for the url
+        base_items_by_depth.push(history_item);
+    }
+
+    return grouped
 }
 
 
 
 /// Splits Urls by the '/' in them.
+/// Helper Method
 fn url_path_list(url: &String) -> Vec<String> {
     let mut url_simplified = url
         .replacen("https://", "", 1)
@@ -79,8 +107,11 @@ fn url_path_list(url: &String) -> Vec<String> {
 
 fn base_with_links<'a>( baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryItem>>,
                         base_hist_items: &'a Vec<&RustHistoryItem>
-                        ) -> Vec<(&'a RustHistoryItem, &'a RustHistoryItem)> {
-    base_hist_items
+                      ) -> Vec<(&'a RustHistoryItem, &'a RustHistoryItem)> {
+
+
+
+    let rules = base_hist_items
         .iter()
         .fold(Vec::new(), |mut graph, &history_item| { 
             match find_parent_item(history_item, baseurl_depth_lists, None) {
@@ -90,7 +121,9 @@ fn base_with_links<'a>( baseurl_depth_lists: &'a BTreeMap<u32, Vec<&RustHistoryI
                 },
                 None => graph
             }
-         })
+        });
+
+    return rules
 }
 
 
@@ -105,7 +138,7 @@ fn find_parent_item<'a>(hist_item: &'a RustHistoryItem,
 
 
     let depth = depth_option.unwrap_or(hist_url_list_len); // Either the depth is specified (recursive) or it is None (Called by base with links)
-    
+
 
     let depths: Vec<u32> = baseurl_depth_lists.keys().map(|d| *d).collect();
     let min_depth: u32 = *(depths.iter().min().unwrap());
@@ -151,7 +184,7 @@ pub mod tests {
 
         debug_assert_eq!(url_path_list(&url),expected_list)
     }
-    
+
     #[test]
     fn url_list_is_correct_when_no_last_slash() {
         let url = "https://github.com/test".to_string();
@@ -170,7 +203,7 @@ pub mod tests {
 
 
         let baseurl_depth_lists = BTreeMap::from([
-            (1, vec![ &parent ])
+                                                 (1, vec![ &parent ])
         ]);
         let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
 
@@ -185,8 +218,8 @@ pub mod tests {
 
 
         let baseurl_depth_lists = BTreeMap::from([
-            (2, vec![ &parent ]),
-            (1, vec![ &base ]),
+                                                 (2, vec![ &parent ]),
+                                                 (1, vec![ &base ]),
         ]);
         let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
 
@@ -198,7 +231,7 @@ pub mod tests {
         let hist_item = RustHistoryItem { title: "test".to_string(), url: "https://github.com/".to_string(), visit_count: 69 };
 
         let baseurl_depth_lists = BTreeMap::from([
-            (1, vec![&hist_item])
+                                                 (1, vec![&hist_item])
         ]);
 
         let r = find_parent_item(&hist_item, &baseurl_depth_lists, None);
