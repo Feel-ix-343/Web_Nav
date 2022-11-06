@@ -58,9 +58,9 @@ Click above to read about this feature ^^^^^
 
 
 ## Installation
-INFO: Currently in the process of uploading to the chrome web store
+The extension is (finally) listen on the chrome-web-store at [WEB_NAV_EXTENSION](https://chrome.google.com/webstore/detail/web-nav-extension/cmpdibdfnkjolimghiflbengofjboobl?hl=en&authuser=0)
 
-To install and use:
+To install and use locally:
 1. Clone repo into a desired directory using `git clone https://github.com/Feel-ix-343/Web_Nav.git`
 2. Navigate to the *webnav_analysis* directory, and run `wasm-pack build --release --target web` in the command prompt. This will build the rust wasm code and produce an npm package in the *webnav_analysis/pkg* directory
     - Note, you will need to have rust and [wasm-pack](https://github.com/rustwasm/wasm-pack) installed
