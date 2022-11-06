@@ -30,14 +30,13 @@ const OutLinkItem = (props: OutlinkProps) => {
   }, [])
 
 
-  const viewSublinksButton = historyItemSublinks ?
-    (
-      <input 
-        className="button"
-        type="button"
-        onClick={() => props.sublinkNeeds.sublinkViewer(historyItemSublinks)}
-        value="View Sublinks" />
-    ) : null
+  const viewSublinksButton = 
+    <input 
+      className={`button ${historyItemSublinks == null ? "hidden" : ""}`}
+      type="button"
+      onClick={() => props.sublinkNeeds.sublinkViewer(historyItemSublinks)}
+      value="View Sublinks"
+    />
 
   const shortenTitle = (title: string) => {
     let titleMaxlength = 80

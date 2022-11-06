@@ -263,6 +263,13 @@ a.button {
   cursor: pointer;
 }
 
+.button.hidden {
+  position: absolute;
+  opacity: 0;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
 .actionContainer {
   display: flex;
   justify-content: space-evenly;
