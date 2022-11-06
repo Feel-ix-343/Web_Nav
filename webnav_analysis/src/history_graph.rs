@@ -37,9 +37,6 @@ impl HistoryGraph {
             })
             .collect();
 
-
-        console_log!("{}", performance.now());
-
         // A graph rule is something like Link -> Link, or in this case (Link, Link).
         let baseurl_graph_rules: BTreeMap<&BaseUrl, Vec<(&RustHistoryItem, &RustHistoryItem)>> = grouped_by_baseurl
             .iter()
@@ -227,6 +224,7 @@ pub mod tests {
     }
 
     #[test]
+    /// This was occuring when a sublink would link to itself
     fn test_double_sublink_issue() {
         let hist_item = RustHistoryItem { title: "test".to_string(), url: "https://github.com/".to_string(), visit_count: 69 };
 
