@@ -58,7 +58,7 @@ Click above to read about this feature ^^^^^
 
 
 ## Installation
-The extension is (finally) listen on the chrome-web-store at [WEB_NAV_EXTENSION](https://chrome.google.com/webstore/detail/web-nav-extension/cmpdibdfnkjolimghiflbengofjboobl?hl=en&authuser=0)
+The extension is (finally) listed on the chrome-web-store at [WEB_NAV_EXTENSION](https://chrome.google.com/webstore/detail/web-nav-extension/cmpdibdfnkjolimghiflbengofjboobl?hl=en&authuser=0)
 
 To install and use locally:
 1. Clone repo into a desired directory using `git clone https://github.com/Feel-ix-343/Web_Nav.git`
