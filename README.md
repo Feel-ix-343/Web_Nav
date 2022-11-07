@@ -9,7 +9,7 @@
   
 ## Abstract
   
-This project uses rust wasm to hierarchically categorize chrome history, then suggests web pages related to a search query to make repetitive (but specific) web navigation more efficient.
+This project uses rust wasm to hierarchically categorize chrome history in the form of a graph, then suggests web pages related to a search query to make repetitive (but specific) web navigation more efficient.
 
 This extension does not provide an alternative to bookmarks, rather it is right between the repetitive navigation of bookmarks and the specificity of a google search. 
 
