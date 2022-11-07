@@ -16,9 +16,10 @@ This extension does not provide an alternative to bookmarks, rather it is right 
 It is for navigating to that one email or page on any website (in your chrome history) through a little typing and one click, rather than going through multiple pages and sitting through annoying load times to get there.
 
 If you don't know the name of the specific page, you can search for the general website that the page would be under, and through clicking "view sublinks," wasm will do its magic, and a scrollable list will popup that is bound to include your desired page!
+  
 
 ## Features
-*Click through the drop downs for more information*
+*Click through the drop downs for more information and example use cases*
 
 <details>
   <summary>Searching through previously visited websites by webpage title</summary>
