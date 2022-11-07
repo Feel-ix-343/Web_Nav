@@ -1,15 +1,21 @@
+<div align="center">
+<img src="https://user-images.githubusercontent.com/88951499/200214355-8fe16396-315a-41c1-885f-3862b2e1bba0.png" width="300" >
+
 # Web Nav
-*The command pallet for the web*
 
+> This typescript (react) and rust (wasm) chrome extension bridges the web navigation efficiency gap between bookmarks and repetitive google searches
 
-Analyses chrome history and suggests webpages related to a search query to make repetitive (but specific) web navigation more efficient.
+<div align="left">
+  
+## Abstract
+  
+This project uses rust wasm to hierarchically categorize chrome history, then suggests web pages related to a search query to make repetitive (but specific) web navigation more efficient.
 
-This extension does not provide an alternative to bookmarks, rather it is right between the repetitive use case of bookmarks and the specificity of a google search. 
+This extension does not provide an alternative to bookmarks, rather it is right between the repetitive navigation of bookmarks and the specificity of a google search. 
 
-It is for navigating to that one email or assignment on any website (in your history) in one click, rather than going through multiple pages and sitting through annoying loading times to get there.
+It is for navigating to that one email or page on any website (in your chrome history) through a little typing and one click, rather than going through multiple pages and sitting through annoying load times to get there.
 
-
-
+If you don't know the name of the specific page, you can search for the general website that the page would be under, and through clicking "view sublinks," wasm will do its magic, and a scrollable list will popup that is bound to include your desired page!
 
 ## Features
 *Click through the drop downs for more information*
